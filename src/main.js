@@ -1,6 +1,6 @@
 import 'normalize.css'
 import './index.css'
-import { createApp } from 'vue'
+import { createApp, reactive } from 'vue'
 // import * as Vue from 'vue'
 // console.log('vue', Vue)
 import { getCurrentPaths } from './request'

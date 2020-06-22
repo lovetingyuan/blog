@@ -2,7 +2,6 @@ import { reactive, computed } from 'vue'
 import { fetchBlogMeta } from './request'
 
 function asyncReactive (obj) {
-  const reactiveObj = reactive(obj)
   Object.entries(obj).forEach(([key, val]) => {
     if (val instanceof Promise) {
       val.then((value) => {
@@ -11,6 +10,7 @@ function asyncReactive (obj) {
       })
     }
   })
+  const reactiveObj = reactive(obj)
   return reactiveObj
 }
 
