@@ -15,7 +15,6 @@ function asyncReactive (obj) {
 }
 
 const store = asyncReactive({
-  BASE_URL: '/blog',
   blogMeta: fetchBlogMeta().then(res => {
     Object.entries(res).forEach(([cate, posts]) => {
       Object.values(posts).forEach(postMeta => {

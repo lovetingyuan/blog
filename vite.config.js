@@ -32,6 +32,6 @@ generateBlogMeta()
 
 module.exports = {
   base: './',
-  outDir: 'dist/blog',
+  outDir: 'dist/nblog',
   assetsDir: 'assets'
 }

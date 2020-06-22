@@ -1,9 +1,8 @@
 <template>
   <header>
     <h1 class="title">
-      <route-link to="/" no-active>庭院 Blog</route-link>
-      &nbsp;
-      <a href="https://tingyuan.me/blog" style="vertical-align: middle">
+      <route-link to="/" no-active>庭院 Blog </route-link>
+      <a href="https://github.com/lovetingyuan/nblog" style="vertical-align: middle">
         <img src="~../assets/github.svg" width="28" alt />
       </a>
     </h1>

@@ -2,7 +2,7 @@ import 'prismjs/themes/prism.css'
 import Prism from 'prismjs';
 import marked from 'marked'
 
-const BASE_URL = process.env.NODE_ENV === 'production' ? '/blog' : ''
+const BASE_URL = process.env.NODE_ENV === 'production' ? '/nblog' : ''
 
 Prism.manual = true
 
@@ -21,7 +21,7 @@ const blogCache = {}
 
 export function getCurrentPaths () {
   const paths = location.pathname.split('/').filter(Boolean)
-  if (paths[0] === 'blog') {
+  if (paths[0] === 'nblog') {
     paths.shift()
   }
   return paths;

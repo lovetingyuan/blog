@@ -8,6 +8,8 @@
 import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import store from '../store'
 
+const BASE_URL = '/nblog'
+
 export const jumpTo = (state, title, url) => {
   history.pushState(state, title, url)
   dispatchEvent(new PopStateEvent('popstate', state));
@@ -25,7 +27,7 @@ export default {
       if (!to.startsWith('/')) {
         to = '/' + to
       }
-      return store.BASE_URL + to
+      return BASE_URL + to
     })
     watch(() => [store.cate, store.blogName], () => {
       active.value = location.pathname.startsWith(href.value)
