@@ -452,7 +452,7 @@ const rmkidsSync = (p, options) => {
   } while (true)
 }
 
-rimrafSync(path.join(__dirname, '../../_assets'))
+rimrafSync(path.join(__dirname, '../../assets'))
 rimrafSync(path.join(__dirname, '../../blog'))
 
 copydirSync(
