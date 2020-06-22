@@ -8,6 +8,18 @@ import App from './App.vue'
 import store from './store'
 import RouteLink from './components/RouteLink.vue'
 
+const app = createApp(App)
+app.component('route-link', RouteLink).mount('#app')
+
+const updateCateAndName = () => {
+  const [cate, name] = getCurrentPaths()
+  store.cate = cate
+  store.blogName = name
+  return updateCateAndName
+}
+
+window.addEventListener('popstate', updateCateAndName())
+
 if (location.search.includes('redirect')) {
   const redirect = decodeURIComponent(new URLSearchParams(location.search).get('redirect'))
   if (redirect) {
@@ -15,16 +27,4 @@ if (location.search.includes('redirect')) {
     history.pushState(state, 'redirect', redirect)
     dispatchEvent(new PopStateEvent('popstate', state));
   }
-} else {
-  const app = createApp(App)
-  app.component('route-link', RouteLink).mount('#app')
-  
-  const updateCateAndName = () => {
-    const [cate, name] = getCurrentPaths()
-    store.cate = cate
-    store.blogName = name
-    return updateCateAndName
-  }
-
-  window.addEventListener('popstate', updateCateAndName())
 }
