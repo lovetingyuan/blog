@@ -1,0 +1,20 @@
+:root {
+  --theme-color: #4fc08d;
+  --theme-color-l: #4fc08d33;
+  --text-color: #20a86b;
+}
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
+}
+
+a {
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+ul ul {
+  margin-top: 20px;
+}
