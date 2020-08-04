@@ -1,4 +1,4 @@
-[meta]: <mobile> (title: 'Hybrid通信方案', keywords: 'hybrid, jsbridge, message, native')
+[meta]: <mobile> (title: 'Hybrid通信方案', keywords: 'hybrid, jsbridge, message, native', date: '2020-8-1')
 
 ## Hybrid通信方案
 
