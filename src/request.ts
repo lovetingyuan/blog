@@ -11,7 +11,6 @@ Prism.manual = true
 
 marked.setOptions({
   highlight(code, lang) {
-    console.log(Prism)
     if (lang && Prism.languages[lang]) {
       try {
         return Prism.highlight(code, Prism.languages[lang], lang);
@@ -61,5 +60,7 @@ export async function fetchBlog () {
 export const fetchBlogMeta = () => {
   return fetch(BASE_URL + '/blog/meta.json').then(res => res.json()).then(data => {
     store.blogMetaApi = data
+  }).catch(err => {
+    alert('请求博客信息出错，' + err)
   })
 }

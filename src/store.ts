@@ -1,19 +1,6 @@
 import { reactive, computed } from 'vue'
 import { BlogMetaItem, Store, BlogListMap } from './types'
 
-// function asyncReactive<T extends object> (obj: T) {
-//   const reactiveObj = reactive(obj)
-//   Object.entries(obj).forEach(([key, val]) => {
-//     if (val instanceof Promise) {
-//       val.then((value) => {
-//         reactiveObj[key] = value
-//         return value
-//       })
-//     }
-//   })
-//   return reactiveObj
-// }
-
 const parseDateStrToTimestamp = (date: string) => {
   date = date.split('T')[0]
   const [year, month, day] = date.split('-').map(v => parseInt(v, 10))
@@ -52,12 +39,6 @@ const store: Store = reactive({
     if (store.currentCate && store.currentBlogName && !store.blogMetaApi[store.currentCate][store.currentBlogName]) return true
     return false
   })
-  // showList: computed(() => {
-  //   return !store.blogName
-  // }),
-  // showArticle: computed(() => {
-  //   return !!store.blogName
-  // })
 })
 
 if (process.env.NODE_ENV === 'development') {
