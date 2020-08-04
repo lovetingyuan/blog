@@ -1,15 +1,17 @@
 import 'prismjs/themes/prism.css'
 import Prism from 'prismjs';
+import 'prismjs/components/prism-typescript'
 import marked from 'marked'
 import store from './store';
 
 const BASE_URL = process.env.NODE_ENV === 'production' ? '/nblog' : ''
 
 // @ts-ignore
-Prism.manual = true 
+Prism.manual = true
 
 marked.setOptions({
   highlight(code, lang) {
+    console.log(Prism)
     if (lang && Prism.languages[lang]) {
       try {
         return Prism.highlight(code, Prism.languages[lang], lang);
@@ -42,6 +44,7 @@ function realFetchBlog (path: string) {
     return html
   }).catch(err => {
     alert(err && err.message)
+    return '';
   })
 }
 

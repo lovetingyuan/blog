@@ -12,8 +12,8 @@ import { watch, ref, nextTick } from 'vue'
 import store from '../store'
 import { fetchBlog } from '../request'
 
-const postMD = (el: HTMLElement) => {
-  el.querySelectorAll('a').forEach(link => {
+const postMD = (el: HTMLElement | null) => {
+  el && el.querySelectorAll('a').forEach(link => {
     link.target = '_blank'
     link.rel = 'noopener noreferrer'
   })
@@ -22,7 +22,7 @@ const postMD = (el: HTMLElement) => {
 export default {
   name: 'BlogContent',
   setup() {
-    const blogContentRef = ref(null)
+    const blogContentRef = ref<HTMLElement | null>(null)
     const blogContent = ref('')
     watch(() => store.currentBlogName, () => {
       fetchBlog().then(blog => {

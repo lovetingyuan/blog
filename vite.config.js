@@ -33,5 +33,10 @@ generateBlogMeta()
 module.exports = {
   base: './',
   outDir: 'dist/nblog',
-  assetsDir: 'assets'
+  assetsDir: 'assets',
+  optimizeDeps: {
+    include: [
+      'prismjs/components/prism-typescript'
+    ]
+  }
 }
