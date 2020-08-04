@@ -7,6 +7,7 @@
     "build": "vite build"
   },
   "dependencies": {
+    "@types/marked": "^1.1.0",
     "github-markdown-css": "^4.0.0",
     "marked": "^1.1.1",
     "normalize.css": "^8.0.1",
@@ -14,6 +15,7 @@
     "vue": "^3.0.0-rc.5"
   },
   "devDependencies": {
+    "@types/prismjs": "^1.16.1",
     "@vue/compiler-sfc": "3.0.0-rc.5",
     "vite": "1.0.0-rc.4"
   }

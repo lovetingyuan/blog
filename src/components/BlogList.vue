@@ -1,14 +1,17 @@
 <template>
-  <ul v-show="!store.blogName" class="blog-list">
-    <li v-for="(post, name) in store.blogList">
+  <ul class="blog-list" v-if="store.currentBlogListView.length">
+    <li v-for="post in store.currentBlogListView">
       <p class="blog-title">
-        <route-link :to="post.cate + '/' + name">{{post.title}}</route-link>
+        <route-link :to="post.cate + '/' + post.name">{{post.title}}</route-link>
       </p>
     </li>
   </ul>
+  <div v-else>
+    Loading...
+  </div>
 </template>
 
-<script>
+<script lang="ts">
 import store from '../store'
 
 export default {
@@ -24,11 +27,12 @@ export default {
     margin: 40px 0;
   }
   .blog-title {
-    font-size: 1.4em;
+    font-size: 1.2em;
     font-weight: 500;
     transition: letter-spacing .2s;
   }
   .blog-title:hover {
     letter-spacing: 1px;
+    font-weight: 600;
   }
 </style>

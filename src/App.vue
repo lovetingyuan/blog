@@ -1,29 +1,36 @@
 <template>
   <div class="container">
     <Header></Header>
+    <hr />
     <main>
-      <nav-bar></nav-bar>
-      <hr />
-      <section>
-        <blog-content></blog-content>
-        <blog-list></blog-list>
-        <not-found></not-found>
-      </section>
+      <not-found v-if="store.errorPage"></not-found>
+      <template v-else>
+        <blog-content v-if="store.currentBlogName"></blog-content>
+       <blog-list v-else></blog-list>
+      </template>
     </main>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import NavBar from './components/NavBar.vue'
 import Header from './components/Header.vue'
 import BlogContent from './components/BlogContent.vue'
 import BlogList from './components/BlogList.vue'
 import NotFound from './components/NotFound.vue'
+import store from './store'
+import { fetchBlogMeta } from './request'
 
 export default {
   name: 'App',
   components: {
     NavBar, Header, BlogContent, BlogList, NotFound
+  },
+  data() {
+    return { store }
+  },
+  mounted() {
+    fetchBlogMeta()
   }
 }
 </script>

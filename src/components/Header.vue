@@ -1,17 +1,31 @@
 <template>
   <header>
-    <h1 class="title">
+    <h2 class="title">
       <route-link to="/" no-active>庭院 Blog </route-link>
-      <a href="https://github.com/lovetingyuan/nblog" style="vertical-align: middle">
-        <img src="~../assets/github.svg" width="28" alt />
+      &nbsp;&nbsp;
+      <a href="https://github.com/lovetingyuan/nblog" style="vertical-align: middle" target="_blank">
+        <img src="~../assets/github.svg" width="24" alt />
       </a>
-    </h1>
+    </h2>
+    <nav-bar></nav-bar> 
   </header>
 </template>
 
-<style>
+<script lang="ts">
+import NavBar from './NavBar.vue'
+
+export default {
+  components: { NavBar }
+}
+</script>
+
+<style scoped>
+.title {
+  float: left;
+  margin: 10px 0;
+}
   header {
-    margin-top: 40px;
+    padding-top: 30px;
   }
   header a  {
     color: #555;

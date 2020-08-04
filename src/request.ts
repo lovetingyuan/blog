@@ -1,10 +1,12 @@
 import 'prismjs/themes/prism.css'
 import Prism from 'prismjs';
 import marked from 'marked'
+import store from './store';
 
 const BASE_URL = process.env.NODE_ENV === 'production' ? '/nblog' : ''
 
-Prism.manual = true
+// @ts-ignore
+Prism.manual = true 
 
 marked.setOptions({
   highlight(code, lang) {
@@ -17,7 +19,7 @@ marked.setOptions({
   },
 });
 
-const blogCache = {}
+const blogCache: Record<string, string> = {}
 
 export function getCurrentPaths () {
   const paths = location.pathname.split('/').filter(Boolean)
@@ -27,7 +29,7 @@ export function getCurrentPaths () {
   return paths;
 }
 
-function realFetchBlog (path) {
+function realFetchBlog (path: string) {
   const url = BASE_URL + `/blog/${path}.md`
   return fetch(url).then(res => {
     if (!res.ok) {
@@ -54,5 +56,7 @@ export async function fetchBlog () {
 }
 
 export const fetchBlogMeta = () => {
-  return fetch(BASE_URL + '/blog/meta.json').then(res => res.json())
+  return fetch(BASE_URL + '/blog/meta.json').then(res => res.json()).then(data => {
+    store.blogMetaApi = data
+  })
 }

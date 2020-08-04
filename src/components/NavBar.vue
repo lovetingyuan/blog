@@ -1,14 +1,14 @@
 <template>
   <nav>
     <ul class="navbar">
-      <li v-for="cate of cates" class="navbar-item">
-        <route-link :to="cate[0]" class="navbar-item_link">{{cate[0]}} {{cate[1]}}</route-link>
+      <li v-for="cate of store.cateListView" class="navbar-item">
+        <route-link :to="cate[0]" class="navbar-item_link" dbto="/">{{cate[0]}} {{cate[1]}}</route-link>
       </li>
     </ul>
   </nav>
 </template>
 
-<script>
+<script lang="ts">
 import { computed } from 'vue'
 import store from '../store'
 
@@ -16,9 +16,7 @@ export default {
   name: 'Navbar',
   setup() {
     return {
-      cates: computed(() => {
-        return store.cates
-      })
+      store
     }
   }
 }
@@ -33,11 +31,13 @@ export default {
 }
 .navbar-item {
   float: left;
-  margin: 10px;
+  margin: 6px 10px;
+  text-transform: capitalize;
 }
 .navbar-item_link {
   display: inline-block;
-  padding: 5px 18px;
+  padding: 5px 16px;
+  font-size: 14px;
   border-radius: 100px;
   border: 1px solid var(--theme-color);
   text-decoration: none;

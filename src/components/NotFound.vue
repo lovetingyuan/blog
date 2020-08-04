@@ -1,30 +1,8 @@
 <template>
-  <div class="not-found" v-if="show">
+  <div class="not-found">
     404, 页面不存在
   </div>
 </template>
-
-<script>
-import { computed } from 'vue'
-import store from '../store'
-
-export default {
-  name: 'NotFound',
-  setup() {
-    const show = computed(() => {
-      if (store.cate) {
-        if (!store.blogMeta[store.cate]) return true
-        if (store.blogName) {
-          if (!store.blogMeta[store.cate][store.blogName]) return true
-        }
-      }
-      return false
-    })
-
-    return {show}
-  }
-}
-</script>
 
 <style scoped>
   .not-found {

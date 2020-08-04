@@ -1,13 +1,18 @@
 <template>
-  <article v-show="blogContent" class="markdown-body" ref="blogContentRef" v-html="blogContent"></article>
+  <article v-if="blogContent" class="markdown-body" ref="blogContentRef" v-html="blogContent">
+    
+  </article>
+  <div v-else style="text-align: center; padding: 50px; font-size: 1.2em;">
+    Loading...
+  </div>
 </template>
 
-<script>
+<script lang="ts">
 import { watch, ref, nextTick } from 'vue'
 import store from '../store'
 import { fetchBlog } from '../request'
 
-const postMD = (el) => {
+const postMD = (el: HTMLElement) => {
   el.querySelectorAll('a').forEach(link => {
     link.target = '_blank'
     link.rel = 'noopener noreferrer'
@@ -19,15 +24,11 @@ export default {
   setup() {
     const blogContentRef = ref(null)
     const blogContent = ref('')
-    watch(() => store.blogName, () => {
-      if (store.blogName) {
-        fetchBlog(store.cate, store.blogName).then(blog => {
-          blogContent.value = blog
-          nextTick(() => postMD(blogContentRef.value))
-        })
-      } else {
-        blogContent.value = ''
-      }
+    watch(() => store.currentBlogName, () => {
+      fetchBlog().then(blog => {
+        blogContent.value = blog
+        nextTick(() => postMD(blogContentRef.value))
+      })
     }, {
       immediate: true
     })
