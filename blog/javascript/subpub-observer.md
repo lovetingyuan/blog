@@ -3,6 +3,7 @@
 ## 发布订阅模式和观察者模式
 
 这两种都是比较常用的编程模式，它们的含义很相近但实现起来又有不同。
+![alt](https://s1.ax1x.com/2020/08/07/afuYod.jpg)
 
 ### 观察者模式
 观察者模式包含 **被观察者(Subject)** 和 **观察者(Observers)**，它们是一对多的关系，即Observer有很多个，Subject只有一个。
@@ -23,5 +24,3 @@
 Subscriber在订阅事件的时候，只关注事件本身，而不关心谁会发布这个事件；Publisher在发布事件的时候，只关注事件本身，而不关心谁订阅了这个事件。
 
 在实现中，中介通常会维护一个事件队列，每一种事件都有对应的订阅者，并向外提供订阅(on)和发布(emit)的接口。Node中EventEmitter，Vue中的EventBus等都是订阅发布模式的体现。
-
-![alt](https://user-gold-cdn.xitu.io/2017/11/22/15fe1b1f174cd376)
