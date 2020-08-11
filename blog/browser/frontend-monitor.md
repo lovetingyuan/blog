@@ -9,7 +9,7 @@
 * 错误监控
   * 资源错误
   * JS运行错误
-* 用户行为监控
+* 埋点上报
 
 ### 性能监控
 
@@ -45,7 +45,13 @@
 
 Nodejs同时也对performance API提供了支持，实现了[perf_hooks](https://nodejs.org/api/perf_hooks.html)接口。
 
+#### 渲染性能
+
+页面渲染问题，一般可以在开发阶段进行评估和发现。Long-task的JS，频繁的重绘回流，大量的dom节点，复杂的动画，过高的CPU内存占用等都会引起掉帧问题。Chrome浏览器的控制台提供了功能强大的performance面板，以及rendering工具（可以查看实时帧率和重绘回流），JavaScript profiler工具，performance monitor工具（CPU，内存，重绘回流，dom节点数等），coverage工具等工具集，可以帮助快速定位性能问题。考虑到可能的掉帧问题，可以利用`requestAnimationFrame`来计算渲染帧率，例如fpsmeter，然后针对有连续掉帧的场景进行上报。
+
 ------
+
+### 错误监控
 
 #### JS及资源加载错误
 * `window.onerror`或`window.addEventListener('error', handler)`
@@ -61,3 +67,12 @@ Nodejs同时也对performance API提供了支持，实现了[perf_hooks](https:/
 #### 接口错误
 * 对于接口请求，通常会封装成一系列方法供业务调用，此时可以很方便的集中处理接口错误；
 否则可以通过patch的方法来实现对API错误的追踪：`fetch`可以直接被overwrite，`XMLHttpRequest`可以patch原型上的`open`，`send`等方法，拿到`xhr`实例然后监听错误。
+
+-----
+
+### 数据埋点上报
+一般需要对用户数据以及用户行为进行上报，用户数据包括账户信息，设备信息等，用户行为包括访问路径，访问时长，页面交互等；
+
+埋点方式一般有代码埋点（主动调用上报API，或者采用dataset或指令等声明式），可视化埋点（如记录控件xpath），无痕埋点（如通过事件委托全量记录用户操作）
+
+上报方式一般采用1px图片Get请求，将数据放在query中；或者采用 [`navigator.sendBeacon`](https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/sendBeacon)，它是异步的post请求，可以保证页面卸载也能完成上报，并且不会与接口请求竞争，是理想的上报方式
