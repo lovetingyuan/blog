@@ -2,14 +2,13 @@
   <nav>
     <ul class="navbar">
       <li v-for="cate of store.cateListView" class="navbar-item">
-        <route-link :to="cate[0]" class="navbar-item_link" dbto="/">{{cate[0]}} {{cate[1]}}</route-link>
+        <route-link :to="cate[0]" class="navbar-item_link" dbto="/nblog/">{{cate[0]}} {{cate[1]}}</route-link>
       </li>
     </ul>
   </nav>
 </template>
 
 <script lang="ts">
-import { computed } from 'vue'
 import store from '../store'
 
 export default {
