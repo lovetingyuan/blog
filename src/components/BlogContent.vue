@@ -52,4 +52,10 @@ export default {
 .markdown-body pre {
   margin: 20px 0;
 }
+.markdown-body li > p {
+  margin: 10px 0;
+}
+.markdown-body li, .markdown-body p {
+  line-height: 2em;
+}
 </style>

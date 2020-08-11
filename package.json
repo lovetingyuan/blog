@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "tingyuan's blog.",
   "scripts": {
-    "dev": "vite",
+    "serve": "vite",
     "build": "vite build"
   },
   "dependencies": {
