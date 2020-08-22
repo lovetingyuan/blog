@@ -392,6 +392,11 @@ array-union@^2.1.0:
   resolved "https://registry.yarnpkg.com/array-union/-/array-union-2.1.0.tgz#b798420adbeb1de828d84acd8a2e23d3efe85e8d"
   integrity sha512-HGyxoOTYUyCM6stUe6EJgnd4EoewAI7zMdfqO+kGjnlZmBDz/cR5pf8r/cR4Wq60sL/p0IkcjUEEPwS3GFrIyw==
 
+asnow@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/asnow/-/asnow-0.0.2.tgz#9ffe12b67efa24f7fc807475f42d357d142f129d"
+  integrity sha512-6sYEF7gaHAfM8lTBBzQhvc5YbIwdIVGQ9SsEshAJp+N9sN75K4VT3uLCqPlyixWsoQ4bfW/NLwq53t6zsgOLJw==
+
 at-least-node@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/at-least-node/-/at-least-node-1.0.0.tgz#602cd4b46e844ad4effc92a8011a3c46e0238dc2"

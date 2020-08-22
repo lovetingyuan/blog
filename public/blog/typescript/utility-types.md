@@ -6,6 +6,8 @@ Typescript的一个强大之处在于它支持通过泛型以及一些关键字�
 
 TypeScript语言本身就内置的一些高阶类型，利用它们可以方便的实现类型编程：
 
+借助于下面要介绍的工具类型，可以实现一些其他常用的工具类型，例如[`type-fest`](https://github.com/sindresorhus/type-fest)以及[`utility-types`](https://github.com/piotrwitek/utility-types), [`ts-toolbelt`](https://github.com/millsp/ts-toolbelt) 都是一些不错的实现，值得参考。
+
 ```typescript
 // 类型T的所有属性都变为可选的
 type Partial<T> = {
