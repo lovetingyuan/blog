@@ -1,4 +1,4 @@
-import { reactive, computed } from 'vue'
+import { reactive, computed, watchEffect } from 'vue'
 import { BlogMetaItem, Store, BlogListMap } from './types'
 
 const parseDateStrToTimestamp = (date: string) => {
@@ -44,5 +44,19 @@ const store: Store = reactive({
 if (process.env.NODE_ENV === 'development') {
   console.log('store', store)
 }
+
+watchEffect(() => {
+  const title = ['tingyuan blog']
+  if (store.currentCate) {
+    title.push(store.currentCate)
+    if (store.currentBlogName) {
+      try {
+        const blog = store.blogMetaApi[store.currentCate][store.currentBlogName]
+        title.push(blog.title)
+      } catch (e) {}
+    }
+  }
+  document.title = title.join(' - ')
+})
 
 export default store

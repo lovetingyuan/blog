@@ -1,8 +1,10 @@
 <template>
   <ul class="blog-list" v-if="store.currentBlogListView.length">
-    <li v-for="post in store.currentBlogListView">
+    <li v-for="post in store.currentBlogListView" :key="post.name">
       <p class="blog-title">
-        <route-link :to="post.cate + '/' + post.name">{{post.title}}</route-link>
+        <route-link :to="post.cate + '/' + post.name">{{post.title}}
+          <span style="font-size: .8em">({{post.date}})</span>
+        </route-link>
       </p>
     </li>
   </ul>
@@ -28,11 +30,10 @@ export default {
   }
   .blog-title {
     font-size: 1.2em;
+    width: fit-content;
     font-weight: 500;
-    transition: letter-spacing .2s;
   }
   .blog-title:hover {
-    letter-spacing: 1px;
     font-weight: 600;
   }
 </style>

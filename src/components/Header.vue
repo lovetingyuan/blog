@@ -1,10 +1,11 @@
 <template>
   <header>
     <h2 class="title">
-      <route-link to="/" no-active>庭院 Blog </route-link>
-      &nbsp;&nbsp;
-      <a href="https://github.com/lovetingyuan/nblog" style="vertical-align: middle" target="_blank">
-        <img src="~../assets/github.svg" width="24" alt />
+      <route-link to="/" no-active>
+        <span title="首页">庭院 Blog </span>
+      </route-link>
+      <a href="https://github.com/lovetingyuan/nblog" style="vertical-align: middle" target="_blank" title="github" rel="noopener noreferrer">
+        <img src="~../assets/github.svg" width="24" alt="github" />
       </a>
     </h2>
     <nav-bar></nav-bar> 

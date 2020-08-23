@@ -6,8 +6,7 @@ import store from './store';
 
 const BASE_URL = process.env.NODE_ENV === 'production' ? '/nblog' : ''
 
-// @ts-ignore
-Prism.manual = true
+;(Prism as any).manual = true
 
 marked.setOptions({
   highlight(code, lang) {

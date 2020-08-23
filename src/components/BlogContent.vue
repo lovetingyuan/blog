@@ -8,14 +8,20 @@
 </template>
 
 <script lang="ts">
-import { watch, ref, nextTick } from 'vue'
+import { watch, ref, nextTick, reactive } from 'vue'
 import store from '../store'
 import { fetchBlog } from '../request'
 
 const postMD = (el: HTMLElement | null) => {
-  el && el.querySelectorAll('a').forEach(link => {
+  if (!el) return
+  el.querySelectorAll('a').forEach(link => {
     link.target = '_blank'
     link.rel = 'noopener noreferrer'
+  })
+  el.querySelectorAll('code').forEach(code => {
+    if (code.attributes.length === 0) {
+      code.style = 'font-weight: bold'
+    }
   })
 }
 

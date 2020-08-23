@@ -39,7 +39,7 @@ export default {
 .container {
   width: 88%;
   min-width: 300px;
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
