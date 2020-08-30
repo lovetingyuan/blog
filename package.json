@@ -4,20 +4,23 @@
   "description": "tingyuan's blog.",
   "scripts": {
     "serve": "vite",
-    "build": "vite build"
+    "build": "node public/buildblog.js && vite build && node public/prerender.js"
   },
   "dependencies": {
     "@types/marked": "^1.1.0",
-    "asnow": "^0.0.2",
     "github-markdown-css": "^4.0.0",
     "marked": "^1.1.1",
     "normalize.css": "^8.0.1",
-    "prismjs": "^1.20.0",
-    "vue": "^3.0.0-rc.5"
+    "prismjs": "^1.21.0",
+    "vue": "^3.0.0-rc.9"
   },
   "devDependencies": {
     "@types/prismjs": "^1.16.1",
-    "@vue/compiler-sfc": "3.0.0-rc.5",
+    "@vue/compiler-sfc": "3.0.0-rc.9",
+    "finalhandler": "^1.1.2",
+    "jsdom": "^16.4.0",
+    "node-fetch": "^2.6.0",
+    "serve-static": "^1.14.1",
     "vite": "1.0.0-rc.4"
   }
 }

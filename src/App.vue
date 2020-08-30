@@ -6,7 +6,7 @@
       <not-found v-if="store.errorPage"></not-found>
       <template v-else>
         <blog-content v-if="store.currentBlogName"></blog-content>
-       <blog-list v-else></blog-list>
+        <blog-list v-else></blog-list>
       </template>
     </main>
   </div>

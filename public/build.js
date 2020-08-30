@@ -454,12 +454,14 @@ const rmkidsSync = (p, options) => {
 
 rimrafSync(path.join(__dirname, '../../assets'))
 rimrafSync(path.join(__dirname, '../../blog'))
-
+const ignoreList = [
+  'build.js', 'buildblog.js', 'prerender.js'
+]
 copydirSync(
   path.join(__dirname),
   path.join(__dirname, '../..'), {
     filter: function(stat, filepath, filename){
-      if(stat === 'file' && filename === 'build.js') {
+      if(stat === 'file' && ignoreList.includes(filename)) {
         return false;
       }
       return true;

@@ -4,18 +4,33 @@
       <li v-for="cate of store.cateListView" class="navbar-item">
         <route-link :to="cate[0]" class="navbar-item_link" dbto="/nblog/">{{cate[0]}} {{cate[1]}}</route-link>
       </li>
+      <li class="navbar-item">
+        <input type="text" autocomplete="on" placeholder="搜索@github" class="searchinput" v-model="keyword" @keyup.enter="search">
+      </li>
     </ul>
   </nav>
 </template>
 
 <script lang="ts">
 import store from '../store'
+import { ref } from 'vue'
 
 export default {
   name: 'Navbar',
   setup() {
+    const keyword = ref('')
+    const search = () => {
+      if (keyword.value.trim()) {
+        const kw = keyword.value.trim()
+        keyword.value = ''
+        const searchParam = `q=${kw}+path%3Ablog+extension%3Amd`
+        window.open(`https://github.com/lovetingyuan/nblog/search?` + (searchParam))
+      }
+    }
     return {
-      store
+      store,
+      keyword,
+      search
     }
   }
 }
@@ -44,5 +59,16 @@ export default {
 }
 .navbar-item_link:hover {
   background-color: var(--theme-color-l);
+}
+.searchinput {
+  padding: 5px 12px;
+  font-size: .9em;
+  border-radius: 100px 100px;
+  outline: none;
+  border: 1px solid #aaa;
+  width: 100px;
+}
+.searchinput:focus {
+  box-shadow: 0 0 4px 0px var(--theme-color);
 }
 </style>

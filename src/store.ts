@@ -46,6 +46,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 watchEffect(() => {
+  if (typeof document !== 'object') return
   const title = ['tingyuan blog']
   if (store.currentCate) {
     title.push(store.currentCate)

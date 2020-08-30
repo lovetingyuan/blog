@@ -41,7 +41,10 @@ function realFetchBlog (path: string) {
     blogCache[path] = html
     return html
   }).catch(err => {
-    alert(err && err.message)
+    console.error(err)
+    if (typeof alert === 'function') {
+      alert(err && err.message)
+    }
     return '';
   })
 }
@@ -60,6 +63,9 @@ export const fetchBlogMeta = () => {
   return fetch(BASE_URL + '/blog/meta.json').then(res => res.json()).then(data => {
     store.blogMetaApi = data
   }).catch(err => {
-    alert('请求博客信息出错，' + err)
+    console.error(err)
+    if (typeof alert === 'function') {
+      alert('请求博客信息出错，' + err)
+    }
   })
 }
