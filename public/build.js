@@ -468,3 +468,11 @@ copydirSync(
     }
   }
 )
+const childProcess = require('child_process')
+childProcess.execSync('git add .')
+childProcess.execSync('git commit -m ' + JSON.stringify(new Date().toLocaleString()))
+childProcess.execSync('git push')
+
+childProcess.execSync('git checkout dev')
+console.log('Build done!')
+
