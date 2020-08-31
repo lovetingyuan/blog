@@ -8,7 +8,6 @@ function resolveValue (promise, value, resolve, reject) {
   if (promise === value) { // 不能resolve自身
     return reject(new TypeError('Can not resolve or return the current promise.'))
   }
-  let called = false // 所有的回调只能调用一次
   if (value === null || (typeof value !== 'object' && typeof value !== 'function')) {
     return resolve(value)
   }
@@ -19,6 +18,7 @@ function resolveValue (promise, value, resolve, reject) {
     return reject(err)
   }
   if (typeof then !== 'function') return resolve(value)
+  let called = false // 所有的回调只能调用一次
   try { // 处理thenable，当然promise本身也是thenable
     then.call(value, val => {
       if (called) return
@@ -40,21 +40,21 @@ function Promise (callback) {
   this._status = 'pending'
   this._value = undefined
   this._callbacks = { resolved: [], rejected: [] }
-  const setStatus = (status, val) => {
-    this._value = val
+  const settle = (status, value) => {
+    this._value = value
     this._status = status
-    this._callbacks[status].forEach(cb => cb(val))
+    this._callbacks[status].forEach(cb => cb(value))
   }
-  let settled = false
-  const onResolve = val => {
-    if (settled) return
-    settled = true
-    resolveValue(this, val, val => setStatus('resolved', val), err => setStatus('rejected', err))
+  let called = false
+  const onResolve = value => {
+    if (called) return
+    called = true
+    resolveValue(this, value, val => settle('resolved', val), err => settle('rejected', err))
   }
   const onReject = err => {
-    if (settled) return
-    settled = true
-    setStatus('rejected', err)
+    if (called) return
+    called = true
+    settle('rejected', err)
   }
   try {
     callback(onResolve, onReject)
@@ -86,9 +86,8 @@ Promise.prototype.then = function then (onResolve, onReject) {
       this._callbacks.rejected.push(() => handleCallback(promise, 'rejected', resolve, reject))
     })
   } else {
-    const { resolve, reject } = new function () {
-      promise = new Promise((...args) => [this.resolve, this.reject] = args)
-    }
+    let resolve, reject
+    promise = new Promise((...args) => [resolve, reject] = args)
     handleCallback(promise, this._status, resolve, reject)
   }
   return promise
