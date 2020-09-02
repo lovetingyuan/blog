@@ -38,8 +38,10 @@ module.exports = JSDOM.fromURL(`http://localhost:${port}/nblog/`, {
 }).then(dom => {
   const stylesheets = []
   dom.window.document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
-    link.setAttribute('media', 'print')
     link.setAttribute('onload', `this.media='all'; this.onload=null;`)
+    setTimeout(() => {
+      link.setAttribute('media', 'print')
+    }, 500);
     stylesheets.push(fs.readFileSync(path.join(rootDir, 'nblog', link.getAttribute('href')), 'utf8'))
   })
   return new Promise(resolve => {
