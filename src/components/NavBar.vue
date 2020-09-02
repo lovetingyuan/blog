@@ -67,8 +67,11 @@ export default {
   outline: none;
   border: 1px solid #aaa;
   width: 100px;
+  transition: width .3s;
 }
 .searchinput:focus {
   box-shadow: 0 0 4px 0px var(--theme-color);
+  border-color: var(--theme-color);
+  width: 160px;
 }
 </style>
