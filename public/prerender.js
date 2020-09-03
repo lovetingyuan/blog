@@ -18,14 +18,14 @@ const server = http.createServer(function onRequest (req, res) {
   serve(req, res, finalhandler(req, res))
 })
 // Listen
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3333
 server.listen(port)
 
 const virtualConsole = new jsdom.VirtualConsole();
 virtualConsole.on('error', (e) => {
   console.error(e)
 })
-
+console.log('Start prerendering...')
 module.exports = JSDOM.fromURL(`http://localhost:${port}/nblog/`, {
   runScripts: 'dangerously',
   resources: 'usable',
@@ -44,6 +44,9 @@ module.exports = JSDOM.fromURL(`http://localhost:${port}/nblog/`, {
     }, 500);
     stylesheets.push(fs.readFileSync(path.join(rootDir, 'nblog', link.getAttribute('href')), 'utf8'))
   })
+  const blogMetaInjectScript = dom.window.document.createElement('script')
+  blogMetaInjectScript.textContent = 'window.blogMeta=' + JSON.stringify(require('../dist/nblog/blog/meta.json'))
+  dom.window.document.head.appendChild(blogMetaInjectScript)
   return new Promise(resolve => {
     setTimeout(() => {
       server.close()

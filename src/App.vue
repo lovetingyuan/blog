@@ -1,5 +1,5 @@
 <template>
-  <div class="container" :class="loading && 'container-disabled'">
+  <div class="container">
     <Header></Header>
     <hr />
     <main>
@@ -27,12 +27,10 @@ export default {
     NavBar, Header, BlogContent, BlogList, NotFound
   },
   data() {
-    return { store, loading: true }
+    return { store }
   },
   mounted() {
-    fetchBlogMeta().then(() => {
-      this.loading = false
-    })
+    fetchBlogMeta()
   }
 }
 </script>
@@ -45,11 +43,11 @@ export default {
   margin: 0 auto;
   position: relative;
 }
-.container-disabled {
+/* .container-disabled {
   pointer-events: none;
   opacity: .8;
-}
-@keyframes loading { from { margin-top: 0; } 50% { margin-top:-30px } to { margin-top: 0; }  }
+} */
+/* @keyframes loading { from { margin-top: 0; } 50% { margin-top:-30px } to { margin-top: 0; }  }
 .container-disabled:after {
   display: block;
   content: '...';
@@ -58,7 +56,7 @@ export default {
   top: 55%;
   left: 50%;
   animation: loading .8s ease 0s infinite;
-}
+} */
 @media screen and (max-width: 500px) {
   .container {
     width: 90%;

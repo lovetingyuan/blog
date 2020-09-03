@@ -40,7 +40,7 @@ export default {
 .navbar {
   list-style: none;
   margin: 0;
-  padding: 0 12px;
+  padding: 0 1px;
   overflow: hidden;
 }
 .navbar-item {
@@ -50,7 +50,7 @@ export default {
 }
 .navbar-item_link {
   display: inline-block;
-  padding: 5px 16px;
+  padding: 4px 14px;
   font-size: 14px;
   border-radius: 100px;
   border: 1px solid var(--theme-color);

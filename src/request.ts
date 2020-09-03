@@ -60,6 +60,10 @@ export async function fetchBlog () {
 }
 
 export const fetchBlogMeta = () => {
+  if ('blogMeta' in window) {
+    store.blogMetaApi = (window as any).blogMeta
+    return Promise.resolve()
+  }
   return fetch(BASE_URL + '/blog/meta.json').then(res => res.json()).then(data => {
     store.blogMetaApi = data
   }).catch(err => {
