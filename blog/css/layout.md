@@ -10,7 +10,7 @@
   <div class="content">content</div>
 </div>
 ```
-
+浮动法：
 ```css
 .left { float: left; width: 100px; }
 .content { margin-left: 100px; }
@@ -23,7 +23,7 @@
 .left { float: left; width: 100px; }
 .content { float: left/* right */; width: calc(100% - 100px); }
 ```
-
+inline-block法：
 ```css
 .container { font-size: 0; }
 .left, .content {
@@ -34,12 +34,12 @@
 .left { width: 100px; }
 .content { width: calc(100% - 100px); }
 ```
-
+绝对定位法：
 ```css
 .left { position: absolute; width: 100px; }
 .content { margin-left: 100px; }
 ```
-
+flex大法：
 ```css
 .container { display: flex; }
 .left { flex: 0 0 100px; }
@@ -75,8 +75,8 @@
 </div>
 ```
 
+圣杯布局：
 ```css
-/* 圣杯布局 */
 .container { padding: 0 100px; }
 .left {
   float: left; margin-left: -100%; width: 100px;
@@ -89,6 +89,7 @@
 .content { float: left; width: 100%; }
 ```
 
+flex大法：
 ```css
 .container { display: flex; }
 .left { order: -1; flex: 0 0 100px; }
@@ -105,7 +106,6 @@
   <div class="right"></div>
 </div>
 ```
-
 ```css
 .content-wrap { float: left; width: 100%; }
 .content { margin: 0 100px; }

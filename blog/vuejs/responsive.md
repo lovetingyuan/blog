@@ -38,10 +38,14 @@ Vue的每个响应式对象包括数组都有`__ob__`的属性，这就是`Obser
 * deep, lazy, sync, dirty, active
 * getter 获取数据的方法，就是上面的expression
 * value 当前的值，用于watch方法
+* `get()`，将自身放到`Dep.target`，执行`getter`方法重新收集依赖
+* `addDep (dep: Dep)`，添加新的dep，并且把自身加入到dep的watcher列表中
+* `cleanupDeps()` 根据新收集到的deps清理旧的dep（把自身从旧的dep移除），把新的deps列表更新为当前的deps
+* `depend()` 将当前的watcher加入到所有的dep中
+* `update()`, `evaluate()` 当数据变化时会被调用，总体就是调用`get()`然后更新`value`，分三种情况：
+  * 对于computed-watcher来讲，是被动触发的过程，当访问到computed属性才会计算，那当computed依赖的属性发生了变化，computed-watcher会在computed-getter那里标记数据已经变脏，这样computed就会重新计算（调用`evaluate()`）而不会使用缓存值了
+  * 对于render-watcher来讲，渲染是异步的，这时`Watcher`会被加入到全局的待执行的watcher列表中，等待渲染调度`nextTick`执行，执行的时候会调用`getter`方法也就更新了组件的视图
+  * 对于同步的watcher来讲会直接调用`getter`获取新的value，在调用getter期间，当前的`Watcher`会被推入一个全局的栈内，并且更新到`Dep.target`，执行的期间会触发数据的getter劫持，`Dep`就会得到订阅。执行完之后出栈并更新新的`deps`列表
 
-`Watcher`会提供`update`方法，也就是当数据变化时会被调用，有三种情况：
-* 对于computed-watcher来讲，是被动触发的过程，当访问到computed属性才会计算，那当computed依赖的属性发生了变化，computed-watcher会在computed-getter那里标记数据已经变脏，这样computed就会重新计算而不会使用缓存值了
-* 对于render-watcher来讲，渲染是异步的，这时`Watcher`会被加入到全局的待执行的watcher列表中，等待渲染调度`nextTick`执行，执行的时候会调用`getter`方法也就更新了组件的视图
-* 对于同步的watcher来讲会直接调用`getter`获取新的value，在调用getter期间，当前的`Watcher`会被推入一个全局的栈内，并且更新到`Dep.target`，执行的期间会触发数据的getter劫持，`Dep`就会得到订阅。执行完之后出栈并更新新的`deps`列表
 
 ![alt](https://cn.vuejs.org/images/data.png)

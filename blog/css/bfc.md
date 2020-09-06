@@ -23,6 +23,8 @@ BFC是Web页面的可视CSS渲染的一部分，是块盒子的布局过程发�
   * column-span 为 all 的元素始终会创建一个新的BFC，即使该元素没有包裹在一个多列容器中（标准变更，Chrome bug）。
 ---
 
+<!--
+
 __Advertisement :)__
 
 - __[pica](https://nodeca.github.io/pica/demo/)__ - high quality and fast image
@@ -267,3 +269,5 @@ It converts "HTML", but keep intact partial entries like "xxxHTMLyyy" and so on.
 ::: warning
 *here be dragons*
 :::
+
+-->
