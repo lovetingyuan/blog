@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-import { watch, ref, nextTick, reactive } from 'vue'
+import { watch, ref, nextTick } from 'vue'
 import store from '../store'
 import { fetchBlog } from '../request'
 
@@ -20,7 +20,7 @@ const postMD = (el: HTMLElement | null) => {
   })
   el.querySelectorAll('code').forEach(code => {
     if (code.attributes.length === 0) {
-      code.style = 'font-weight: bold'
+      code.style.fontWeight = 'bold'
     }
   })
 }

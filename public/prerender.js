@@ -47,6 +47,10 @@ module.exports = JSDOM.fromURL(`http://localhost:${port}/nblog/`, {
   const blogMetaInjectScript = dom.window.document.createElement('script')
   blogMetaInjectScript.textContent = 'window.blogMeta=' + JSON.stringify(require('../dist/nblog/blog/meta.json'))
   dom.window.document.head.appendChild(blogMetaInjectScript)
+  const buildtime = dom.window.document.createElement('meta')
+  buildtime.name = 'buildtime'
+  buildtime.content = Date.now()
+  dom.window.document.head.appendChild(buildtime)
   return new Promise(resolve => {
     setTimeout(() => {
       server.close()
