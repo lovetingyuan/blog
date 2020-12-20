@@ -1,13 +1,15 @@
 import 'normalize.css'
 import './index.css'
-import { createApp } from 'vue'
-import { getCurrentPaths } from './request'
+import { createApp, watchEffect } from 'vue'
 import App from './App.vue'
 import store from './store'
 import RouteLink from './components/RouteLink.vue'
 
+const BASE_URL = '/nblog/'
+
 const _createApp = () => {
   const app = createApp(App)
+  RouteLink.BASE_URL = BASE_URL
   app.component('route-link', RouteLink)
   return app
 }
@@ -15,10 +17,20 @@ const _createApp = () => {
 export default _createApp
 
 const updateCateAndName = () => {
-  const [cate, name] = getCurrentPaths()
-  store.currentCate = cate
+  let pathname = location.pathname
+  if (pathname.startsWith(BASE_URL) || (pathname + '/').startsWith(BASE_URL)) {
+    pathname = pathname.substring(BASE_URL.length, pathname.length)
+  }
+  const [cate = '', name = ''] = pathname.split('/').filter(Boolean)
+  store.currentBlogCate = cate
   store.currentBlogName = name
   return updateCateAndName
+}
+
+if (typeof document === 'object') {
+  watchEffect(() => {
+    document.title = store.docTitle
+  })
 }
 
 if (typeof window === 'object') {
@@ -28,10 +40,8 @@ if (typeof window === 'object') {
   if (location.search.includes('redirect')) {
     const redirect = decodeURIComponent(new URLSearchParams(location.search).get('redirect') || '')
     if (redirect) {
-      const state = { redirect }
-      history.pushState(state, 'redirect', redirect)
-      dispatchEvent(new PopStateEvent('popstate', { state }));
+      history.pushState({ redirect }, 'redirect', redirect)
+      updateCateAndName()
     }
   }
 }
-

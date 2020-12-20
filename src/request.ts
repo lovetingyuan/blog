@@ -1,8 +1,8 @@
 import 'prismjs/themes/prism.css'
-import Prism from 'prismjs';
+import Prism from 'prismjs'
 import 'prismjs/components/prism-typescript'
 import marked from 'marked'
-import store from './store';
+import store from './store'
 
 const BASE_URL = process.env.NODE_ENV === 'production' ? '/nblog' : ''
 
@@ -13,7 +13,7 @@ marked.setOptions({
     if (lang && Prism.languages[lang]) {
       try {
         return Prism.highlight(code, Prism.languages[lang], lang);
-      } catch (__) {}
+      } catch (_) {}
     }
     return code;
   },
@@ -21,17 +21,10 @@ marked.setOptions({
 
 const blogCache: Record<string, string> = {}
 
-export function getCurrentPaths () {
-  const paths = location.pathname.split('/').filter(Boolean)
-  if (paths[0] === 'nblog') {
-    paths.shift()
-  }
-  return paths;
-}
-
-function realFetchBlog (path: string) {
-  const url = BASE_URL + `/blog/${path}.md`
-  return fetch(url).then(res => {
+export function fetchBlog (cate: string, name: string) {
+  const path = cate + '/' + name
+  if (blogCache[path]) return Promise.resolve(blogCache[path])
+  return fetch(BASE_URL + `/blog/${path}.md`).then(res => {
     if (!res.ok) {
       throw new Error(`请求"${path}"失败\n${res.status}: ${res.statusText}.`)
     }
@@ -41,7 +34,9 @@ function realFetchBlog (path: string) {
     blogCache[path] = html
     return html
   }).catch(err => {
-    console.error(err)
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(err)
+    }
     if (typeof alert === 'function') {
       alert(err && err.message)
     }
@@ -49,23 +44,13 @@ function realFetchBlog (path: string) {
   })
 }
 
-export async function fetchBlog () {
-  const paths = getCurrentPaths()
-  const path = paths.join('/')
-  const storedBlog = blogCache[path]
-  if (storedBlog) {
-    return storedBlog
-  }
-  return realFetchBlog(path)
-}
-
-export const fetchBlogMeta = () => {
+export const fetchBlogMeta = async () => {
   if ('blogMeta' in window) {
-    store.blogMetaApi = (window as any).blogMeta
-    return Promise.resolve()
+    store.blogMeta = (window as any).blogMeta
+    return
   }
   return fetch(BASE_URL + '/blog/meta.json').then(res => res.json()).then(data => {
-    store.blogMetaApi = data
+    store.blogMeta = data
   }).catch(err => {
     console.error(err)
     if (typeof alert === 'function') {

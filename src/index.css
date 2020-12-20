@@ -1,6 +1,6 @@
 :root {
   --theme-color: #4fc08d;
-  --theme-color-l: #4fc08d33;
+  --theme-color-l: #9ee7c633;
   --text-color: #1b8656;
 }
 #app {
@@ -17,8 +17,4 @@ a {
 
 ul ul {
   margin-top: 20px;
-}
-
-ul li::marker {
-  color: red;
 }

@@ -3,33 +3,37 @@
     <Header></Header>
     <hr />
     <main>
-      <not-found v-if="store.errorPage"></not-found>
-      <template v-else>
-        <blog-content v-if="store.currentBlogName"></blog-content>
-        <blog-list v-else></blog-list>
-      </template>
+      <div class="not-found" v-if="isNotFound">
+        404, 页面不存在
+      </div>
+      <transition name="fade" mode="out-in" appear v-else>
+        <component :is="view"></component>
+      </transition>
     </main>
   </div>
 </template>
 
 <script lang="ts">
-import NavBar from './components/NavBar.vue'
 import Header from './components/Header.vue'
 import BlogContent from './components/BlogContent.vue'
 import BlogList from './components/BlogList.vue'
-import NotFound from './components/NotFound.vue'
 import store from './store'
 import { fetchBlogMeta } from './request'
 
 export default {
   name: 'App',
   components: {
-    NavBar, Header, BlogContent, BlogList, NotFound
+    Header, BlogContent, BlogList
   },
-  data() {
-    return { store }
+  computed: {
+    view() {
+      return store.currentBlogName ? 'BlogContent' : 'BlogList'
+    },
+    isNotFound() {
+      return store.isNotFound
+    }
   },
-  mounted() {
+  created() {
     fetchBlogMeta()
   }
 }
@@ -43,23 +47,27 @@ export default {
   margin: 0 auto;
   position: relative;
 }
-/* .container-disabled {
-  pointer-events: none;
-  opacity: .8;
-} */
-/* @keyframes loading { from { margin-top: 0; } 50% { margin-top:-30px } to { margin-top: 0; }  }
-.container-disabled:after {
-  display: block;
-  content: '...';
-  font-size: 5em;
-  position: absolute;
-  top: 55%;
-  left: 50%;
-  animation: loading .8s ease 0s infinite;
-} */
+.not-found {
+  height: 200px;
+  width: 100%;
+  margin: 100px 0;
+  text-align: center;
+  font-size: 1.6em;
+  font-weight: bold;
+}
 @media screen and (max-width: 500px) {
   .container {
     width: 90%;
   }
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: transform 0.2s ease, opacity .2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  transform: translateX(-40px);
+  opacity: 0;
 }
 </style>

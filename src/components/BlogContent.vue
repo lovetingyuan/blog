@@ -31,7 +31,9 @@ export default {
     const blogContentRef = ref<HTMLElement | null>(null)
     const blogContent = ref('')
     watch(() => store.currentBlogName, () => {
-      fetchBlog().then(blog => {
+      const { currentBlogCate: cate, currentBlogName: name } = store
+      if (!cate || !name) return
+      fetchBlog(cate, name).then(blog => {
         blogContent.value = blog
         nextTick(() => postMD(blogContentRef.value))
       })

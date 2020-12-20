@@ -5,17 +5,13 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import store from '../store'
 
-const BASE_URL = '/nblog'
-
-export const jumpTo = (state, title, url) => {
-  history.pushState(state, title, url)
-  dispatchEvent(new PopStateEvent('popstate', state));
-}
+const BASE_URL = '/nblog/'
 
 export default {
+  name: 'route-link',
   props: {
     to: String,
     noActive: Boolean,
@@ -27,29 +23,22 @@ export default {
   setup(props) {
     const active = ref(false)
     const href = computed(() => {
-      let to = props.to
-      if (!to.startsWith('/')) {
-        to = '/' + to
-      }
-      return BASE_URL + to
+      return (BASE_URL + props.to).replace(/\/\//g, '/')
     })
-    watch(() => [store.currentCate, store.currentBlogName], () => {
+    watch(() => [store.currentBlogCate, store.currentBlogName], () => {
       active.value = location.pathname.startsWith(href.value)
     }, {
       immediate: true
     })
 
-    const onClick = (evt) => {
-      let to = href.value
-      if (location.pathname === to) {
-        if (props.dbto && to !== props.dbto) {
-          to = props.dbto
-        } else return
-      }
-      const state = {
-        to, from: location.pathname
-      }
-      jumpTo(state, evt.target.textContent, to)
+    const onClick = (evt: MouseEvent) => {
+      const to = href.value
+      const from = location.pathname
+      if (from === to || !evt.target) return
+      const state = { to, from }
+      const title = (evt.target as any).textContent
+      history.pushState(state, title, to)
+      dispatchEvent(new PopStateEvent('popstate', { state }));
     }
     return {
       onClick, active, href

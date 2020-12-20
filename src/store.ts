@@ -1,5 +1,17 @@
-import { reactive, computed, watchEffect } from 'vue'
-import { BlogMetaItem, Store, BlogListMap } from './types'
+import { reactive, computed } from 'vue'
+
+function init<T extends {[k: string]: any}>(model: T) {
+  const newModel = {} as T;
+  Object.keys(model).forEach((k: keyof T) => {
+    const desc = Object.getOwnPropertyDescriptor(model, k)
+    if (desc?.get) {
+      newModel[k] = computed(desc.get) as any
+    } else {
+      newModel[k] = model[k]
+    }
+  })
+  return reactive(newModel)
+}
 
 const parseDateStrToTimestamp = (date: string) => {
   date = date.split('T')[0]
@@ -7,57 +19,72 @@ const parseDateStrToTimestamp = (date: string) => {
   return new Date(year, month - 1, day).getTime()
 }
 
-const store: Store = reactive({
-  blogMetaApi: {},
-  blogMetaView: computed<BlogListMap>(() => {
-    const map: BlogListMap = {}
-    Object.entries(store.blogMetaApi).forEach(([cate, blogMap]) => {
+type BlogCate = string
+type BlogName = string
+interface BlogItem {
+  title: string
+  date: string
+  keywords: string
+  cate?: string
+  name?: string
+  id?: string
+}
+type BlogMeta = Record<BlogCate, Record<BlogName, BlogItem>>
+type BlogCateMap = Record<BlogCate, Required<BlogItem>[]>
+
+const sortByTime = (a: BlogItem, b: BlogItem) => {
+  return parseDateStrToTimestamp(b.date) - parseDateStrToTimestamp(a.date)
+}
+
+const store = init({
+  blogMeta: {} as BlogMeta,
+  currentBlogName: '',
+  currentBlogCate: '',
+  get blogMap () {
+    const map: BlogCateMap = {}
+    Object.entries(store.blogMeta).forEach(([cate, blogMap]) => {
       map[cate] = Object.entries(blogMap).map(([name, meta]) => {
-        return { cate, name, ...meta }
-      }).sort((a, b) => {
-        return parseDateStrToTimestamp(b.date) - parseDateStrToTimestamp(a.date) 
-      })
+        return { cate, name, id: cate + '/' + name, ...meta }
+      }).sort(sortByTime)
     })
     return map
-  }),
-  cateListView: computed<[string, number][]>(() => {
-    return Object.entries(store.blogMetaView).map(([cate, list]) => [cate, list.length])
-  }),
-  currentBlogName: '',
-  currentCate: '',
-  allBlogListView: computed<BlogMetaItem[]>(() => {
-    return Object.values(store.blogMetaView).reduce((a, b) => a.concat(b), []).sort((a, b) => {
-      return parseDateStrToTimestamp(b.date) - parseDateStrToTimestamp(a.date)
+  },
+  get blogList () {
+    if (store.currentBlogCate) {
+      return store.blogMap[store.currentBlogCate]
+    }
+    return Object.values(store.blogMap).reduce((a, b) => a.concat(b), []).sort(sortByTime)
+  },
+  get cateList () {
+    return Object.entries(store.blogMap).map(([cate, list]) => {
+      return {
+        name: cate, count: list.length
+      }
     })
-  }),
-  currentBlogListView: computed<BlogMetaItem[]>(() => {
-    if (store.currentCate) return store.blogMetaView[store.currentCate] || []
-    return store.allBlogListView || []
-  }),
-  errorPage: computed<boolean>(() => {
-    if (store.currentCate && !store.blogMetaApi[store.currentCate]) return true
-    if (store.currentCate && store.currentBlogName && !store.blogMetaApi[store.currentCate][store.currentBlogName]) return true
+  },
+  get isNotFound () {
+    const { currentBlogCate: cate, currentBlogName: name, blogMeta } = store
+    if (cate) {
+      if (!blogMeta[cate]) return true
+      if (name && !blogMeta[cate][name]) return true
+    }
     return false
-  })
+  },
+  get docTitle () {
+    const title = ['tingyuan blog']
+    if (store.isNotFound) {
+      title.push('not found')
+    } else {
+      const { currentBlogCate: cate, currentBlogName: name } = store
+      title.push(cate)
+      title.push(name)
+    }
+    return title.filter(Boolean).join(' - ')
+  }
 })
 
 if (process.env.NODE_ENV === 'development') {
   console.log('store', store)
 }
-
-watchEffect(() => {
-  if (typeof document !== 'object') return
-  const title = ['tingyuan blog']
-  if (store.currentCate) {
-    title.push(store.currentCate)
-    if (store.currentBlogName) {
-      try {
-        const blog = store.blogMetaApi[store.currentCate][store.currentBlogName]
-        title.push(blog.title)
-      } catch (e) {}
-    }
-  }
-  document.title = title.join(' - ')
-})
 
 export default store
