@@ -11,7 +11,7 @@
     <nav>
       <ul class="navbar">
         <li v-for="cate of cateList" :key="cate.name" class="navbar-item">
-          <route-link :to="cate.name" class="navbar-item_link" dbto="/nblog/">{{cate.name}} {{cate.count}}</route-link>
+          <route-link :to="cate.name" class="navbar-item_link">{{cate.name}} {{cate.count}}</route-link>
         </li>
         <li class="navbar-item">
           <input type="text"

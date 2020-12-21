@@ -1,5 +1,5 @@
 module.exports = {
-  base: './',
+  base: '/nblog/',
   outDir: 'dist/nblog',
   assetsDir: 'assets',
   optimizeDeps: {
@@ -8,4 +8,3 @@ module.exports = {
     ]
   }
 }
-

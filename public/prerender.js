@@ -21,6 +21,11 @@ const server = http.createServer(function onRequest (req, res) {
 const port = process.env.PORT || 3333
 server.listen(port)
 
+const buildTime = function () {
+  var d = new Date(TIME);
+  console.log('build:' + d.toLocaleDateString() + ' ' + d.toLocaleTimeString());
+}
+
 const virtualConsole = new jsdom.VirtualConsole();
 virtualConsole.on('error', (e) => {
   console.error(e)
@@ -42,12 +47,12 @@ module.exports = JSDOM.fromURL(`http://localhost:${port}/nblog/`, {
     setTimeout(() => {
       link.setAttribute('media', 'print')
     }, 500);
-    stylesheets.push(fs.readFileSync(path.join(rootDir, 'nblog', link.getAttribute('href')), 'utf8'))
+    stylesheets.push(fs.readFileSync(path.join(rootDir, '.' + link.getAttribute('href')), 'utf8'))
   })
   const injectScript = doc.createElement('script')
   injectScript.textContent = [
     'window.blogMeta=' + JSON.stringify(require('../dist/nblog/blog/meta.json')),
-    'window.__buildTime__=' + Date.now()
+    `(${buildTime.toString().replace('TIME', Date.now())})()`
   ].join(';')
   doc.head.appendChild(injectScript)
   const headScripts = doc.head.querySelectorAll('script')
