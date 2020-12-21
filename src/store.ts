@@ -4,7 +4,7 @@ function init<T extends {[k: string]: any}>(model: T) {
   const newModel = {} as T;
   Object.keys(model).forEach((k: keyof T) => {
     const desc = Object.getOwnPropertyDescriptor(model, k)
-    if (desc?.get) {
+    if (desc && desc.get) {
       newModel[k] = computed(desc.get) as any
     } else {
       newModel[k] = model[k]

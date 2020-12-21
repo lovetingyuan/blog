@@ -6,5 +6,5 @@ module.exports = {
     include: [
       'prismjs/components/prism-typescript'
     ]
-  }
+  },
 }

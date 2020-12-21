@@ -34,7 +34,13 @@ export default {
     }
   },
   created() {
-    fetchBlogMeta()
+    fetchBlogMeta().then(() => {
+      setTimeout(() => {
+        if (typeof (window as any).__prerender === 'function') {
+          (window as any).__prerender()
+        }
+      })
+    })
   }
 }
 </script>
