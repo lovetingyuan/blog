@@ -36,54 +36,46 @@ module.exports = JSDOM.fromURL(`http://localhost:${port}/nblog/`, {
     })
   }
 }).then(dom => {
-  const stylesheets = []
-  dom.window.document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+  const stylesheets = [], doc = dom.window.document
+  doc.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
     link.setAttribute('onload', `this.media='all'; this.onload=null;`)
     setTimeout(() => {
       link.setAttribute('media', 'print')
     }, 500);
     stylesheets.push(fs.readFileSync(path.join(rootDir, 'nblog', link.getAttribute('href')), 'utf8'))
   })
-  const blogMetaInjectScript = dom.window.document.createElement('script')
-  blogMetaInjectScript.textContent = 'window.blogMeta=' + JSON.stringify(require('../dist/nblog/blog/meta.json'))
-  dom.window.document.head.appendChild(blogMetaInjectScript)
-  const buildtime = dom.window.document.createElement('meta')
-  buildtime.name = 'buildtime'
-  buildtime.content = Date.now()
-  dom.window.document.head.appendChild(buildtime)
-  return new Promise(resolve => {
-    setTimeout(() => {
-      server.close()
-      fetch('https://uncss-online.com/api/uncss', {
-        method: 'POST',
-        headers: {
-          'user-agent': 'Mozilla/4.0 MDN Example',
-          'content-type': 'application/json'
-        },
-        body: JSON.stringify({
-          inputCss: stylesheets.join('\n'), inputHtml: dom.window.document.body.innerHTML
-        })
-      }).then(res => res.json()).then(res => {
-        const style = dom.window.document.createElement('style')
-        style.dataset.inject = true
-        style.textContent = res.outputCss
-        dom.window.document.head.appendChild(style)
-      }).finally(() => {
-        const prerenderhtml = dom.serialize()
-        dom.window.close()
-        fs.writeFileSync(indexPath, prerenderhtml)
-        resolve()
-      })
-      // const critical = require('critical');
-
-      // critical.generate({
-      //   inline: true,
-      //   base: path.join(rootDir, 'nblog'),
-      //   src: 'index.html',
-      //   target: 'index-critical.html',
-      //   width: 1300,
-      //   height: 900,
-      // });
-    }, 1000)
+  const injectScript = doc.createElement('script')
+  injectScript.textContent = [
+    'window.blogMeta=' + JSON.stringify(require('../dist/nblog/blog/meta.json')),
+    'window.__buildTime__=' + Date.now()
+  ].join(';')
+  doc.head.appendChild(injectScript)
+  const headScripts = doc.head.querySelectorAll('script')
+  const bodyScript = doc.body.querySelector('script')
+  headScripts.forEach(v => {
+    if (v === injectScript) return
+    bodyScript ? doc.body.insertBefore(v, bodyScript) : doc.body.appendChild(v)
+  })
+  server.close()
+  return fetch('https://uncss-online.com/api/uncss', {
+    method: 'POST',
+    headers: {
+      'user-agent': 'Mozilla/4.0 JSDOM',
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      inputCss: stylesheets.join('\n'),
+      inputHtml: doc.body.innerHTML
+    })
+  }).then(res => res.json()).then(res => {
+    const style = doc.createElement('style')
+    style.dataset.critical = true
+    style.textContent = res.outputCss
+    doc.head.appendChild(style)
+  }).finally(() => {
+    const html = dom.serialize()
+    dom.window.close()
+    fs.writeFileSync(indexPath, html)
+    console.log('Prerender done.')
   })
 });
