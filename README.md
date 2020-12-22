@@ -1,4 +1,1 @@
-# blog
-personal blog
-
-https://tingyuan.me/nblog
+personal blog: https://tingyuan.me/nblog
