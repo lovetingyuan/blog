@@ -5,7 +5,10 @@
   "description": "tingyuan's blog, https://tingyuan.me/nblog/",
   "scripts": {
     "serve": "vite",
-    "build": "node public/buildblog.js && vite build && node public/prerender.js"
+    "build:ssr": "vite build --entry src/server.ts --ssr --outDir dist/ssr",
+    "prebuild": "node public/buildblog.js",
+    "postbuild": "node public/prerender.js",
+    "build": "vite build && yarn build:ssr"
   },
   "dependencies": {
     "github-markdown-css": "^4.0.0",
@@ -15,8 +18,9 @@
     "vue": "^3.0.4"
   },
   "devDependencies": {
-    "@types/prismjs": "^1.16.2",
+    "@vue/server-renderer": "^3.0.4",
     "@types/marked": "^1.2.1",
+    "@types/prismjs": "^1.16.2",
     "@vue/compiler-sfc": "^3.0.4",
     "finalhandler": "^1.1.2",
     "jsdom": "^16.4.0",

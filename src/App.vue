@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <Header></Header>
+    <top-header></top-header>
     <hr />
     <main>
       <div class="not-found" v-if="isNotFound">
@@ -15,32 +15,30 @@
 
 <script lang="ts">
 import Header from './components/Header.vue'
-import BlogContent from './components/BlogContent.vue'
 import BlogList from './components/BlogList.vue'
 import store from './store'
-import { fetchBlogMeta } from './request'
-
+import { computed, defineAsyncComponent, h } from 'vue'
+const BlogContent = defineAsyncComponent({
+  loader: () => import('./components/BlogContent.vue'),
+  loadingComponent: () => h('h3', {
+    style: { textAlign: 'center', lineHeight: '3em' },
+    innerHTML: 'loading...'
+  })
+})
 export default {
   name: 'App',
   components: {
-    Header, BlogContent, BlogList
+    TopHeader: Header,
+    BlogList,
+    BlogContent,
   },
-  computed: {
-    view() {
-      return store.currentBlogName ? 'BlogContent' : 'BlogList'
-    },
-    isNotFound() {
-      return store.isNotFound
+  setup() {
+    return {
+      view: computed(() => {
+        return store.currentBlogName ? BlogContent : BlogList
+      }),
+      isNotFound: computed(() => store.isNotFound)
     }
-  },
-  created() {
-    fetchBlogMeta().then(() => {
-      setTimeout(() => {
-        if (typeof (window as any).__prerender === 'function') {
-          (window as any).__prerender()
-        }
-      })
-    })
   }
 }
 </script>

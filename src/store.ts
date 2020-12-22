@@ -1,7 +1,7 @@
 import { reactive, computed } from 'vue'
 
 function init<T extends {[k: string]: any}>(model: T) {
-  const newModel = {} as T;
+  const newModel = {} as typeof model;
   Object.keys(model).forEach((k: keyof T) => {
     const desc = Object.getOwnPropertyDescriptor(model, k)
     if (desc && desc.get) {
@@ -36,10 +36,18 @@ const sortByTime = (a: BlogItem, b: BlogItem) => {
   return parseDateStrToTimestamp(b.date) - parseDateStrToTimestamp(a.date)
 }
 
-const store = init({
+const model = {
+  baseUrl: '/nblog/',
   blogMeta: {} as BlogMeta,
   currentBlogName: '',
   currentBlogCate: '',
+  setMeta(meta: BlogMeta) {
+    store.blogMeta = meta;
+  },
+  setCateName(cate: string, name: string) {
+    store.currentBlogName = name
+    store.currentBlogCate = cate
+  },
   get blogMap () {
     const map: BlogCateMap = {}
     Object.entries(store.blogMeta).forEach(([cate, blogMap]) => {
@@ -81,7 +89,9 @@ const store = init({
     }
     return title.filter(Boolean).join(' - ')
   }
-})
+}
+
+const store = init(model)
 
 if (process.env.NODE_ENV === 'development') {
   console.log('store', store)

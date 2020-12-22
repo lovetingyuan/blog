@@ -11,6 +11,22 @@
 import { watch, ref, nextTick } from 'vue'
 import store from '../store'
 import { fetchBlog } from '../request'
+import marked from 'marked'
+import 'prismjs/themes/prism.css'
+import Prism from 'prismjs'
+import 'prismjs/components/prism-typescript'
+;(Prism as any).manual = true
+
+marked.setOptions({
+  highlight(code, lang) {
+    if (lang && Prism.languages[lang]) {
+      try {
+        return Prism.highlight(code, Prism.languages[lang], lang);
+      } catch (_) {}
+    }
+    return code;
+  },
+});
 
 const postMD = (el: HTMLElement | null) => {
   if (!el) return
@@ -33,7 +49,7 @@ export default {
     watch(() => store.currentBlogName, () => {
       const { currentBlogCate: cate, currentBlogName: name } = store
       if (!cate || !name) return
-      fetchBlog(cate, name).then(blog => {
+      fetchBlog(cate, name, marked).then(blog => {
         blogContent.value = blog
         nextTick(() => postMD(blogContentRef.value))
       })

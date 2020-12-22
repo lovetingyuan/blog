@@ -8,25 +8,22 @@
 import { ref, computed, watch } from 'vue'
 import store from '../store'
 
-const BASE_URL = '/nblog/'
-
 export default {
   name: 'route-link',
   props: {
-    to: String,
+    to: { type: String, required: true, },
     noActive: Boolean,
-    dbto: {
-      type: String,
-      required: false
-    }
+    baseUrl: { type: String, default: store.baseUrl }
   },
   setup(props) {
     const active = ref(false)
     const href = computed(() => {
-      return (BASE_URL + props.to).replace(/\/\//g, '/')
+      return (props.baseUrl + props.to).replace(/\/\//g, '/')
     })
     watch(() => [store.currentBlogCate, store.currentBlogName], () => {
-      active.value = location.pathname.startsWith(href.value)
+      if (typeof location === 'object') {
+        active.value = location.pathname.startsWith(href.value)
+      }
     }, {
       immediate: true
     })
