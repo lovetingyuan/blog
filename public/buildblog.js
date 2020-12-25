@@ -24,4 +24,6 @@ const generateBlogMeta = () => {
 
 module.exports = generateBlogMeta
 
-generateBlogMeta()
+if (require.main === module) {
+  generateBlogMeta()
+}

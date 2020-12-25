@@ -53,8 +53,10 @@ module.exports = async () => {
 
 if (require.main === module) {
   console.log('Start prerendering...')
+  const start = Date.now()
   module.exports().then(() => {
-    console.log('Prerender done.')
+    const cost = (Date.now() - start) / 1000
+    console.log(`Prerender done in ${cost.toFixed(2)}s.`)
   }).catch(e => {
     console.error('Prerender failed: ', e)
   })
