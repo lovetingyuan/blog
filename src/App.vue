@@ -3,10 +3,7 @@
     <top-header></top-header>
     <hr />
     <main>
-      <div class="not-found" v-if="isNotFound">
-        404, 页面不存在
-      </div>
-      <transition name="fade" mode="out-in" appear v-else>
+      <transition name="fade" mode="out-in" appear>
         <component :is="view"></component>
       </transition>
     </main>
@@ -17,7 +14,7 @@
 import Header from './components/Header.vue'
 import BlogList from './components/BlogList.vue'
 import store from './store'
-import { computed, defineAsyncComponent, h } from 'vue'
+import { computed, defineAsyncComponent, h, watch } from 'vue'
 const BlogContent = defineAsyncComponent({
   loader: () => import('./components/BlogContent.vue'),
   loadingComponent: () => h('h3', {
@@ -33,11 +30,18 @@ export default {
     BlogContent,
   },
   setup() {
+    const isNotFound = computed(() => store.isNotFound)
+    watch(isNotFound, () => {
+      if (isNotFound.value) {
+        alert(`当前地址 ${location.href} 有误`)
+        location.href = store.baseUrl
+      }
+    })
     return {
       view: computed(() => {
         return store.currentBlogName ? BlogContent : BlogList
       }),
-      isNotFound: computed(() => store.isNotFound)
+      isNotFound
     }
   }
 }
@@ -63,6 +67,9 @@ export default {
   .container {
     width: 90%;
   }
+}
+hr {
+  transform: scaleY(.5);
 }
 .fade-enter-active,
 .fade-leave-active {

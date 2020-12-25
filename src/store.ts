@@ -1,7 +1,7 @@
 import { reactive, computed } from 'vue'
 
 function init<T extends {[k: string]: any}>(model: T) {
-  const newModel = {} as typeof model;
+  const newModel = {} as T;
   Object.keys(model).forEach((k: keyof T) => {
     const desc = Object.getOwnPropertyDescriptor(model, k)
     if (desc && desc.get) {
@@ -38,7 +38,7 @@ const sortByTime = (a: BlogItem, b: BlogItem) => {
 
 const model = {
   baseUrl: '/nblog/',
-  blogMeta: {} as BlogMeta,
+  blogMeta: null as unknown as (BlogMeta | null),
   currentBlogName: '',
   currentBlogCate: '',
   setMeta(meta: BlogMeta) {
@@ -49,6 +49,7 @@ const model = {
     store.currentBlogCate = cate
   },
   get blogMap () {
+    if (!store.blogMeta) return null
     const map: BlogCateMap = {}
     Object.entries(store.blogMeta).forEach(([cate, blogMap]) => {
       map[cate] = Object.entries(blogMap).map(([name, meta]) => {
@@ -58,12 +59,14 @@ const model = {
     return map
   },
   get blogList () {
+    if (!store.blogMap) return []
     if (store.currentBlogCate) {
       return store.blogMap[store.currentBlogCate]
     }
     return Object.values(store.blogMap).reduce((a, b) => a.concat(b), []).sort(sortByTime)
   },
   get cateList () {
+    if (!store.blogMap) return []
     return Object.entries(store.blogMap).map(([cate, list]) => {
       return {
         name: cate, count: list.length
@@ -72,6 +75,7 @@ const model = {
   },
   get isNotFound () {
     const { currentBlogCate: cate, currentBlogName: name, blogMeta } = store
+    if (!blogMeta) return false
     if (cate) {
       if (!blogMeta[cate]) return true
       if (name && !blogMeta[cate][name]) return true
