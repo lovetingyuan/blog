@@ -9,10 +9,6 @@ const JSDOM = require('jsdom').JSDOM
 const createApp = require('../dist/ssr/assets/server')
 
 module.exports = async () => {
-  const buildTime = function () {
-    var d = new Date(TIME);
-    console.log('build: ' + d.toLocaleDateString() + ' ' + d.toLocaleTimeString());
-  }
   const jsdom = new JSDOM(fs.readFileSync(indexPath, 'utf8'))
   const stylesheets = []
   const doc = jsdom.window.document
@@ -28,7 +24,7 @@ module.exports = async () => {
   const injectScript = doc.createElement('script')
   injectScript.textContent = [
     'window.blogMeta=' + JSON.stringify(require('../dist/nblog/blog/meta.json')),
-    `(${buildTime.toString().replace('TIME', Date.now()).replace(/\s{2,}/g, ' ')})()`
+    `window.__BuildTime=${Date.now()}`
   ].join(';')
   doc.head.appendChild(injectScript)
   const res = await fetch('https://uncss-online.com/api/uncss', {

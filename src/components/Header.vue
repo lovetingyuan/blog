@@ -1,12 +1,7 @@
 <template>
   <header>
     <h3 class="title">
-      <route-link to="/" no-active>
-        <span>庭院 Blog </span>
-      </route-link>
-      <a href="https://github.com/lovetingyuan/nblog" style="vertical-align: middle" target="_blank" title="github" rel="noopener noreferrer">
-        <img src="~../assets/github.svg" width="20" alt="github" />
-      </a>
+      <route-link to="/#" no-active>庭院 Blog</route-link>
     </h3>
     <nav>
       <ul class="navbar">
@@ -22,40 +17,54 @@
             @keyup.enter="handleSearch"
           >
         </li>
+        <li class="navbar-item">
+          <input type="color" v-model="themeColor">
+        </li>
       </ul>
     </nav>
   </header>
 </template>
 
-<script lang="ts">
-import { computed, ref } from 'vue'
+<script lang="ts" setup>
+import { computed, ref, watchEffect } from 'vue'
 import store from '../store'
-
-export default {
-  name: 'Header',
-  setup() {
-    const keyword = ref('')
-    const handleSearch = () => {
-      if (keyword.value.trim()) {
-        const kw = keyword.value.trim()
-        keyword.value = ''
-        const searchParam = `q=${kw}+path%3Ablog+extension%3Amd`
-        window.open(`https://github.com/lovetingyuan/nblog/search?` + (searchParam))
-      }
-    }
-    return {
-      cateList: computed(() => store.cateList),
-      keyword,
-      handleSearch
-    }
+const keyword = ref('')
+const cateList = computed(() => store.cateList)
+const handleSearch = () => {
+  if (keyword.value.trim()) {
+    const kw = keyword.value.trim()
+    keyword.value = ''
+    const searchParam = `q=${kw}+path%3Ablog+extension%3Amd`
+    window.open(`https://github.com/lovetingyuan/nblog/search?` + (searchParam))
   }
 }
+if (typeof document === 'object') {
+  const root = document.documentElement
+  const rootStyle = window.getComputedStyle(root)
+  let themeColor = ref(rootStyle.getPropertyValue('--theme-color').trim())
+  const storedThemeColor = localStorage.getItem('1:nblog:themeColor')
+  if (storedThemeColor) {
+    themeColor.value = storedThemeColor
+  }
+  watchEffect(() => {
+    const color = themeColor.value
+    const root = document.documentElement
+    root.style.setProperty('--theme-color', color)
+    root.style.setProperty('--theme-color-ll', color + '30')
+    root.style.setProperty('--theme-color-l', color + 'dd')
+    localStorage.setItem('1:nblog:themeColor', color)
+  })
+}
+
 </script>
 
 <style scoped>
 .title {
   float: left;
   margin: 6px;
+}
+.title a:hover {
+  color: var(--theme-color);
 }
 header {
   padding-top: 30px;
@@ -84,7 +93,7 @@ header a  {
   transition: background-color .2s;
 }
 .navbar-item_link:hover {
-  background-color: var(--theme-color-l);
+  background-color: var(--theme-color-ll);
 }
 .searchinput {
   padding: 5px 12px;
@@ -99,5 +108,12 @@ header a  {
   box-shadow: 0 0 4px 0px var(--theme-color);
   border-color: var(--theme-color);
   width: 160px;
+}
+input[type=color] {
+  display: inline-block;
+  border: none;
+  padding: 0;
+  background: transparent;
+  width: 20px;
 }
 </style>

@@ -8,43 +8,48 @@
       </transition>
     </main>
   </div>
+  <footer>
+    <span>© tingyuan {{ time }}</span>
+    &nbsp;
+    <a
+      href="https://github.com/lovetingyuan/nblog"
+      target="_blank"
+      title="github"
+      rel="noopener noreferrer"
+    >
+      <img src="./assets/github.svg" width="14" height="14" alt="github" />
+    </a>
+  </footer>
 </template>
 
-<script lang="ts">
-import Header from './components/Header.vue'
-import BlogList from './components/BlogList.vue'
-import store from './store'
-import { computed, defineAsyncComponent, h, watch } from 'vue'
+<script lang="ts" setup>
+import TopHeader from "./components/Header.vue";
+import BlogList from "./components/BlogList.vue";
+import store from "./store";
+import { computed, defineAsyncComponent, h, watch } from "vue";
+
 const BlogContent = defineAsyncComponent({
-  loader: () => import('./components/BlogContent.vue'),
-  loadingComponent: () => h('h3', {
-    style: { textAlign: 'center', lineHeight: '3em' },
-    innerHTML: 'loading...'
-  })
-})
-export default {
-  name: 'App',
-  components: {
-    TopHeader: Header,
-    BlogList,
-    BlogContent,
-  },
-  setup() {
-    const isNotFound = computed(() => store.isNotFound)
-    watch(isNotFound, () => {
-      if (isNotFound.value) {
-        alert(`当前地址 ${location.href} 有误`)
-        location.href = store.baseUrl
-      }
-    })
-    return {
-      view: computed(() => {
-        return store.currentBlogName ? BlogContent : BlogList
-      }),
-      isNotFound
-    }
+  loader: () => import("./components/BlogContent.vue"),
+  loadingComponent: () =>
+    h("h3", {
+      style: { textAlign: "center", lineHeight: "3em" },
+      innerHTML: "loading...",
+    }),
+});
+const isNotFound = computed(() => store.isNotFound);
+watch(isNotFound, () => {
+  if (isNotFound.value) {
+    alert(`当前地址 ${location.href} 有误`);
+    location.href = store.baseUrl;
   }
+});
+let time = new Date().getFullYear() + "";
+if (typeof window === 'object' && '__BuildTime' in window) {
+  time = new Date((window as any).__BuildTime).toLocaleString();
 }
+const view = computed(() => {
+  return store.currentBlogName ? BlogContent : BlogList;
+});
 </script>
 
 <style scoped>
@@ -68,17 +73,27 @@ export default {
     width: 90%;
   }
 }
-hr {
-  transform: scaleY(.5);
-}
 .fade-enter-active,
 .fade-leave-active {
-  transition: transform 0.2s ease, opacity .2s ease;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .fade-enter-from,
 .fade-leave-to {
   transform: translateX(-40px);
   opacity: 0;
+}
+.container {
+  min-height: calc(100vh - 40px);
+}
+footer {
+  text-align: center;
+  font-size: 12px;
+  color: #888;
+  height: 40px;
+  line-height: 40px;
+}
+footer img {
+  vertical-align: sub;
 }
 </style>

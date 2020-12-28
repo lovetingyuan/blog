@@ -10,16 +10,11 @@
   <div v-else> Loading... </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { computed } from 'vue'
 import store from '../store'
+const list = computed(() => store.blogList)
 
-export default {
-  name: 'BlogList',
-  setup: () => ({
-    list: computed(() => store.blogList)
-  })
-}
 </script>
 
 <style scoped>
