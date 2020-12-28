@@ -4,9 +4,9 @@ const base = process.env.NODE_ENV === 'production' ? store.baseUrl : '/'
 
 const blogCache: Record<string, string> = {}
 
-let _fetch: typeof window.fetch
+let _fetch: typeof fetch
 
-if (typeof window === 'object') {
+if (typeof document === 'object') {
   'blogMeta' in window && store.setMeta((window as any).blogMeta)
   _fetch = window.fetch
 }
@@ -27,7 +27,7 @@ export function fetchBlog (cate: string, name: string, marked: (a: string) => st
     if (process.env.NODE_ENV !== 'production') {
       console.error(err)
     }
-    if (typeof alert === 'function') {
+    if (typeof document === 'object') {
       alert(err && err.message)
     }
     return '';
@@ -46,7 +46,7 @@ export const fetchBlogMeta = () => {
       store.setMeta(data)
     }).catch(err => {
       console.error(err)
-      if (typeof alert === 'function') {
+      if (typeof document === 'object') {
         alert('请求博客信息出错，' + err)
       }
     })

@@ -38,10 +38,12 @@ const handleSearch = () => {
     window.open(`https://github.com/lovetingyuan/nblog/search?` + (searchParam))
   }
 }
+
+let themeColor: typeof keyword
 if (typeof document === 'object') {
   const root = document.documentElement
   const rootStyle = window.getComputedStyle(root)
-  let themeColor = ref(rootStyle.getPropertyValue('--theme-color').trim())
+  themeColor = ref(rootStyle.getPropertyValue('--theme-color').trim())
   const storedThemeColor = localStorage.getItem('1:nblog:themeColor')
   if (storedThemeColor) {
     themeColor.value = storedThemeColor

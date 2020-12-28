@@ -44,7 +44,7 @@ watch(isNotFound, () => {
   }
 });
 let time = new Date().getFullYear() + "";
-if (typeof window === 'object' && '__BuildTime' in window) {
+if (typeof document === 'object' && '__BuildTime' in window) {
   time = new Date((window as any).__BuildTime).toLocaleString();
 }
 const view = computed(() => {

@@ -24,7 +24,7 @@ const href = computed(() => {
 watch(
   () => [store.currentBlogCate, store.currentBlogName],
   () => {
-    if (typeof location === "object") {
+    if (typeof document === 'object') {
       active.value = location.pathname.startsWith(href.value);
     }
   },
