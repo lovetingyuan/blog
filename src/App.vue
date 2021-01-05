@@ -31,8 +31,8 @@ import { computed, defineAsyncComponent, h, watch } from "vue";
 const BlogContent = defineAsyncComponent({
   loader: () => import("./components/BlogContent.vue"),
   loadingComponent: () =>
-    h("h3", {
-      style: { textAlign: "center", lineHeight: "3em" },
+    h("div", {
+      class: 'loader',
       innerHTML: "loading...",
     }),
 });

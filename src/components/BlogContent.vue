@@ -10,7 +10,7 @@
     </ul>
     <article v-if="blogContent" class="markdown-body" ref="blogContentRef" v-html="blogContent">
     </article>
-    <div v-else style="text-align: center; padding: 50px; font-size: 1.2em;">
+    <div v-else class="loader">
       Loading...
     </div>
   </div>
@@ -88,7 +88,7 @@ export default {
   .blog-directs {
     position: sticky;
     top: 0;
-    background-color: white;
+    background-color: var(--theme-bg-color);
     overflow: hidden;
     padding: 20px 0;
     margin: 0;

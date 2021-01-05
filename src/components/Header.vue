@@ -65,7 +65,7 @@ if (typeof document === 'object') {
   float: left;
   margin: 6px;
 }
-.title a:hover {
+.title a {
   color: var(--theme-color);
 }
 header {
