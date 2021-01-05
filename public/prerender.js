@@ -3,15 +3,16 @@ const path = require('path')
 const fetch = require('node-fetch')
 const rootDir = path.resolve(__dirname, '../dist')
 const indexPath = path.join(rootDir, 'nblog/index.html')
-
-const JSDOM = require('jsdom').JSDOM
+const domino = require('domino')
 
 const createApp = require('../dist/ssr/assets/server')
 
 module.exports = async () => {
-  const jsdom = new JSDOM(fs.readFileSync(indexPath, 'utf8'))
   const stylesheets = []
-  const doc = jsdom.window.document
+  const doc = domino.createWindow(
+    fs.readFileSync(indexPath, 'utf8'),
+    'https://tingyuan.me/nblog/'
+  ).document
   const ssrContent = await createApp()
   doc.getElementById('app').innerHTML = ssrContent
   doc.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
@@ -35,16 +36,13 @@ module.exports = async () => {
     },
     body: JSON.stringify({
       inputCss: stylesheets.join('\n'),
-      inputHtml: doc.body.innerHTML
+      inputHtml: doc.body.outerHTML
     })
   }).then(res => res.json())
   const style = doc.createElement('style')
-  style.dataset.critical = true
   style.textContent = res.outputCss
   doc.head.appendChild(style)
-  const html = jsdom.serialize()
-  jsdom.window.close()
-  fs.writeFileSync(indexPath, html)
+  fs.writeFileSync(indexPath, '<!DOCTYPE html>' + doc.documentElement.outerHTML)
 }
 
 if (require.main === module) {

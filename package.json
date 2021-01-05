@@ -14,15 +14,15 @@
     "github-markdown-css": "^4.0.0",
     "marked": "^1.2.7",
     "normalize.css": "^8.0.1",
-    "prismjs": "^1.22.0",
-    "vue": "^3.0.4"
+    "prismjs": "^1.23.0",
+    "vue": "^3.0.5"
   },
   "devDependencies": {
-    "@vue/server-renderer": "^3.0.4",
     "@types/marked": "^1.2.1",
     "@types/prismjs": "^1.16.2",
-    "@vue/compiler-sfc": "^3.0.4",
-    "jsdom": "^16.4.0",
+    "@vue/compiler-sfc": "^3.0.5",
+    "@vue/server-renderer": "^3.0.5",
+    "domino": "^2.1.6",
     "node-fetch": "^2.6.1",
     "vite": "1.0.0-rc.13"
   }
