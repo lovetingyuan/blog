@@ -37,7 +37,7 @@ export function fetchBlog (cate: string, name: string, marked: (a: string) => st
 export const fetchBlogMeta = () => {
   let task
   if (!_fetch) {
-    task = Promise.resolve(require('../../../public/blog/meta.json'))
+    task = Promise.resolve(require('../nblog/blog/meta.json'))
   } else {
     task =  _fetch(base + 'blog/meta.json').then(res => res.json())
   }

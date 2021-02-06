@@ -17,13 +17,14 @@
 </template>
 
 <script lang="ts">
-import { watch, ref, nextTick, computed } from 'vue'
+import { watch, ref, nextTick, computed, defineComponent } from 'vue'
 import store from '../store'
 import { fetchBlog } from '../request'
 import marked from 'marked'
 import 'prismjs/themes/prism.css'
 import Prism from 'prismjs'
 import 'prismjs/components/prism-typescript'
+import 'github-markdown-css'
 ;(Prism as any).manual = true
 marked.setOptions({
   highlight(code, lang) {
@@ -44,7 +45,7 @@ const postMD = (el: HTMLElement | null) => {
   })
 }
 
-export default {
+export default defineComponent({
   name: 'BlogContent',
   setup() {
     const blogContentRef = ref<HTMLElement | null>(null)
@@ -80,10 +81,9 @@ export default {
     })
     return { blogContentRef, blogContent, directs, directsRef, blogName }
   }
-}
+})
 </script>
 
-<style src="github-markdown-css"></style>
 <style scoped>
   .blog-directs {
     position: sticky;

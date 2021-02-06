@@ -5,14 +5,11 @@ const rootDir = path.resolve(__dirname, '../dist')
 const indexPath = path.join(rootDir, 'nblog/index.html')
 const domino = require('domino')
 
-const createApp = require('../dist/ssr/assets/server')
+const createApp = require('../dist/ssr/server')
 
 module.exports = async () => {
   const stylesheets = []
-  const doc = domino.createWindow(
-    fs.readFileSync(indexPath, 'utf8'),
-    'https://tingyuan.me/nblog/'
-  ).document
+  const doc = domino.createDocument(fs.readFileSync(indexPath, 'utf8'))
   const ssrContent = await createApp()
   doc.getElementById('app').innerHTML = ssrContent
   doc.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
