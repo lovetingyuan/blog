@@ -455,7 +455,7 @@ const rmkidsSync = (p, options) => {
 rimrafSync(path.join(__dirname, '../../assets'))
 rimrafSync(path.join(__dirname, '../../blog'))
 const ignoreList = [
-  'build.js', 'buildblog.js', 'prerender.js'
+  'build.js'
 ]
 copydirSync(
   path.join(__dirname),
@@ -470,7 +470,7 @@ copydirSync(
 )
 const childProcess = require('child_process')
 childProcess.execSync('git add .')
-childProcess.execSync('git commit -m ' + JSON.stringify(new Date().toLocaleString()))
+childProcess.execSync('git commit -m ' + JSON.stringify(new Date().toISOString()))
 childProcess.execSync('git push')
 childProcess.execSync('git checkout dev')
 

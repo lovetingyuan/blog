@@ -1,12 +1,12 @@
 <template>
   <header>
     <h3 class="title">
-      <route-link to="/#" no-active>庭院 Blog</route-link>
+      <router-link to="/#" no-active>庭院 Blog</router-link>
     </h3>
     <nav>
       <ul class="navbar">
         <li v-for="cate of cateList" :key="cate.name" class="navbar-item">
-          <route-link :to="cate.name" class="navbar-item_link">{{cate.name}} {{cate.count}}</route-link>
+          <router-link :to="'/' + cate.name" class="navbar-item_link">{{cate.name}} {{cate.count}}</router-link>
         </li>
         <li class="navbar-item">
           <input type="text"
@@ -26,10 +26,11 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watchEffect } from 'vue'
-import store from '../store'
+import { ref, watchEffect } from 'vue'
+// import store from '../store'
+import { getBlogCateList } from '../blog'
 const keyword = ref('')
-const cateList = computed(() => store.cateList)
+const cateList = getBlogCateList()
 const handleSearch = () => {
   if (keyword.value.trim()) {
     const kw = keyword.value.trim()
@@ -38,7 +39,6 @@ const handleSearch = () => {
     window.open(`https://github.com/lovetingyuan/nblog/search?` + (searchParam))
   }
 }
-
 let themeColor: typeof keyword
 if (typeof document === 'object') {
   const root = document.documentElement

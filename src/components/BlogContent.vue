@@ -16,72 +16,52 @@
   </div>
 </template>
 
-<script lang="ts">
-import { watch, ref, nextTick, computed, defineComponent } from 'vue'
-import store from '../store'
-import { fetchBlog } from '../request'
-import marked from 'marked'
+<script lang="ts" setup>
+import { watch, ref, nextTick, defineProps } from 'vue'
 import 'prismjs/themes/prism.css'
-import Prism from 'prismjs'
+import * as Prism from 'prismjs'
 import 'prismjs/components/prism-typescript'
 import 'github-markdown-css'
-;(Prism as any).manual = true
-marked.setOptions({
-  highlight(code, lang) {
-    if (lang && Prism.languages[lang]) {
-      try {
-        return Prism.highlight(code, Prism.languages[lang], lang);
-      } catch (_) {}
-    }
-    return code;
-  },
-});
 
-const postMD = (el: HTMLElement | null) => {
-  if (!el) return
-  el.querySelectorAll('a').forEach(link => {
-    link.target = '_blank'
-    link.rel = 'noopener noreferrer'
-  })
-}
+import { getBlogContent } from '../blog'
 
-export default defineComponent({
-  name: 'BlogContent',
-  setup() {
-    const blogContentRef = ref<HTMLElement | null>(null)
-    const blogContent = ref('')
-    const directs = ref<string[]>([])
-    const directsRef = ref<HTMLUListElement | null>(null)
-    const blogName = computed(() => store.currentBlogName)
-    watch(() => blogName, () => {
-      const { currentBlogCate: cate, currentBlogName: name } = store
-      if (!cate || !name) return
-      fetchBlog(cate, name, marked).then(blog => {
-        blogContent.value = blog
-        nextTick(() => {
-          const el = blogContentRef.value
-          if (!el) return
-          postMD(el)
-          directs.value.length = 0
-          el.querySelectorAll('[id]').forEach(v => {
-            directs.value.push(v.id)
-          })
-          nextTick(() => {
-            const el = directsRef.value
-            if (el) {
-              const { height } = el.getBoundingClientRect()
-              const root = document.documentElement
-              root.style.setProperty('--scroll-margin-top', height + 'px')
-            }
-          })
-        })
-      })
-    }, {
-      immediate: true
-    })
-    return { blogContentRef, blogContent, directs, directsRef, blogName }
-  }
+const props = defineProps({
+  cate: { type: String, required: true },
+  article: { type: String, required: true }
 })
+
+const blogContent = ref('')
+
+const directs = ref<string[]>([])
+const directsRef = ref<HTMLUListElement | null>(null)
+const blogContentRef = ref<HTMLElement | null>(null)
+
+watch(props, ({ cate, article }) => {
+  getBlogContent(cate, article).then(md => {
+    blogContent.value = md;
+    nextTick(() => {
+      Prism.highlightAllUnder(blogContentRef.value as any)
+      const el = blogContentRef.value;
+      if (el) {
+        directs.value.length = 0
+        el.querySelectorAll('[id]').forEach(v => {
+          directs.value.push(v.id)
+        })
+        if (directsRef.value) {
+          const { height } = directsRef.value.getBoundingClientRect()
+          const root = document.documentElement
+          root.style.setProperty('--scroll-margin-top', height + 'px')
+        }
+      }
+    })
+  }).catch(() => {
+    blogContent.value = '获取失败，请检查地址'
+  })
+}, {
+  deep: true,
+  immediate: true
+})
+
 </script>
 
 <style scoped>

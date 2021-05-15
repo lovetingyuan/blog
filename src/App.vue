@@ -3,9 +3,11 @@
     <top-header></top-header>
     <hr />
     <main>
-      <transition name="fade" mode="out-in" appear>
-        <component :is="view"></component>
-      </transition>
+      <router-view v-slot="{ Component }">
+        <transition name="fade" mode="out-in" appear>
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </main>
   </div>
   <footer>
@@ -24,32 +26,10 @@
 
 <script lang="ts" setup>
 import TopHeader from "./components/Header.vue";
-import BlogList from "./components/BlogList.vue";
-import store from "./store";
-import { computed, defineAsyncComponent, h, watch } from "vue";
-
-const BlogContent = defineAsyncComponent({
-  loader: () => import("./components/BlogContent.vue"),
-  loadingComponent: () =>
-    h("div", {
-      class: 'loader',
-      innerHTML: "loading...",
-    }),
-});
-const isNotFound = computed(() => store.isNotFound);
-watch(isNotFound, () => {
-  if (isNotFound.value) {
-    alert(`当前地址 ${location.href} 有误`);
-    location.href = store.baseUrl;
-  }
-});
 let time = new Date().getFullYear() + "";
-if (typeof document === 'object' && '__BuildTime' in window) {
-  time = new Date((window as any).__BuildTime).toLocaleString();
+if (import.meta.env._buildTime) {
+  time = new Date(import.meta.env._buildTime as unknown as number).toLocaleString();
 }
-const view = computed(() => {
-  return store.currentBlogName ? BlogContent : BlogList;
-});
 </script>
 
 <style scoped>
