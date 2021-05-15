@@ -453,12 +453,11 @@ const rmkidsSync = (p, options) => {
 }
 
 rimrafSync(path.join(__dirname, '../../assets'))
-rimrafSync(path.join(__dirname, '../../blog'))
 const ignoreList = [
   'build.js'
 ]
 copydirSync(
-  path.join(__dirname),
+  path.join(__dirname, '../nblog/'),
   path.join(__dirname, '../..'), {
     filter: function(stat, filepath, filename){
       if(stat === 'file' && ignoreList.includes(filename)) {
@@ -468,6 +467,7 @@ copydirSync(
     }
   }
 )
+
 const childProcess = require('child_process')
 childProcess.execSync('git add .')
 childProcess.execSync('git commit -m ' + JSON.stringify(new Date().toISOString()))
