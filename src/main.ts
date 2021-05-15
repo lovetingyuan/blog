@@ -8,5 +8,5 @@ app.mount('#app')
 
 const redirect = decodeURIComponent(new URLSearchParams(location.search).get('redirect') || '')
 if (redirect) {
-  location.pathname = redirect
+  router.replace(redirect)
 }
