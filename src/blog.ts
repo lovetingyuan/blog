@@ -1,10 +1,12 @@
+import { reactive } from 'vue'
+
 const blogs = import.meta.glob('/src/blog/**/*.md')
 
-const blogsMap: {
+const blogsMap = reactive<{
   [k: string]: {
-    [k: string]: () => Promise<{ default: string }>
+    [k: string]: (() => Promise<{ default: string }>)
   }
-} = {}
+}>({})
 
 Object.keys(blogs).forEach(path => {
   const paths = path.split('/')
@@ -48,10 +50,4 @@ export function getBlogContent(cate: string, name: string) {
     return Promise.reject()
   }
   return blogsMap[cate][name]().then(res => res.default)
-}
-
-if (import.meta.hot) {
-  import.meta.hot?.accept((nm) => {
-    console.log(nm)
-  })
 }

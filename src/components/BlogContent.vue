@@ -8,7 +8,7 @@
         <a href="#">⬆</a>
       </li>
     </ul>
-    <article v-if="blogContent" class="markdown-body" ref="blogContentRef" v-html="blogContent">
+    <article v-if="blogContent" id="blog-content" class="markdown-body" ref="blogContentRef" v-html="blogContent">
     </article>
     <div v-else class="loader">
       Loading...
