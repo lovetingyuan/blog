@@ -27,12 +27,17 @@ const prerender = () => {
   return {
     name: 'ssr-prerender-plugin',
     async transformIndexHtml(html, ctx) {
+      if (ctx.server) return
       if (ctx.filename === resolve(__dirname, 'index.html')) {
-        const createApp = require('./dist/ssr/server').default
-        const doc = createDocument(html)
-        const ssrContent = await createApp()
-        doc.getElementById('app').innerHTML = ssrContent
-        return '<!DOCTYPE html>' + doc.documentElement.outerHTML
+        try {
+          const createApp = require('./dist/ssr/server').default
+          const doc = createDocument(html)
+          const ssrContent = await createApp()
+          doc.getElementById('app').innerHTML = ssrContent
+          return '<!DOCTYPE html>' + doc.documentElement.outerHTML
+        } catch (e) {
+          console.error('ssr prerender error: ', e)
+        }
       }
     },
   } as Plugin
