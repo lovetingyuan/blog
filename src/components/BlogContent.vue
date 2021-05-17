@@ -36,27 +36,24 @@ const directs = ref<string[]>([])
 const directsRef = ref<HTMLUListElement | null>(null)
 const blogContentRef = ref<HTMLElement | null>(null)
 
-watch(props, ({ cate, article }) => {
-  getBlogContent(cate, article).then(md => {
-    blogContent.value = md;
-    nextTick(() => {
-      Prism.highlightAllUnder(blogContentRef.value as any)
-      const el = blogContentRef.value;
-      if (el) {
-        directs.value.length = 0
-        el.querySelectorAll('[id]').forEach(v => {
-          directs.value.push(v.id)
-        })
-        if (directsRef.value) {
-          const { height } = directsRef.value.getBoundingClientRect()
-          const root = document.documentElement
-          root.style.setProperty('--scroll-margin-top', height + 'px')
-        }
-      }
-    })
-  }).catch(() => {
-    blogContent.value = '获取失败，请检查地址'
+watch(props, async ({ cate, article }) => {
+  const md = await getBlogContent(cate, article).catch(() => {
+    return '获取失败，请检查地址'
   })
+  blogContent.value = md;
+  await nextTick()
+  const el: HTMLElement | null = blogContentRef.value;
+  if (!el) return
+  Prism.highlightAllUnder(el)
+  directs.value.length = 0
+  el.querySelectorAll('[id]').forEach(v => {
+    directs.value.push(v.id)
+  })
+  if (directsRef.value) {
+    const { height } = directsRef.value.getBoundingClientRect()
+    const root = document.documentElement
+    root.style.setProperty('--scroll-margin-top', height + 'px')
+  }
 }, {
   deep: true,
   immediate: true
