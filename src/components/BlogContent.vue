@@ -21,7 +21,7 @@ import { watch, ref, nextTick, defineProps } from 'vue'
 import 'prismjs/themes/prism.css'
 import * as Prism from 'prismjs'
 import 'prismjs/components/prism-typescript'
-import 'github-markdown-css'
+import 'github-markdown-css/github-markdown.css'
 
 import blogs from '../blogs'
 

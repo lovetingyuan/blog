@@ -1,8 +1,8 @@
-import { defineConfig } from 'vite'
+import { defineConfig, normalizePath } from 'vite'
 import type { Plugin } from 'vite'
 import type { OutputAsset } from 'rollup'
 import vue from '@vitejs/plugin-vue'
-import { resolve, dirname } from 'path'
+import { resolve } from 'path'
 import { readFileSync } from 'fs'
 import marked from 'marked'
 import { createDocument } from 'domino'
@@ -37,9 +37,9 @@ const prerender = () => {
     name: 'ssr-prerender-plugin',
     async transformIndexHtml(html, ctx) {
       if (ctx.server) return
-      if (ctx.filename === resolve(__dirname, 'index.html')) {
+      if (ctx.filename === normalizePath(resolve(__dirname, 'index.html'))) {
         try {
-          const createApp = require('./dist/server').default
+          const createApp = require('./dist/ssr/server').default
           const doc = createDocument(html)
           const ssrContent = await createApp()
           doc.getElementById('app').innerHTML = ssrContent
