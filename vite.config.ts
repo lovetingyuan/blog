@@ -9,6 +9,8 @@ import { createDocument } from 'domino'
 import critical from 'critical'
 import fse from 'fs-extra'
 
+const docsDir = resolve(__dirname, 'docs')
+
 const isSSR = process.argv.includes('--ssr')
 
 const md = () => {
@@ -68,8 +70,9 @@ const criticalCss = () => {
           height: 1500,
         })
       }
-      fse.copySync(options.dir, dirname(options.dir))
-      fse.removeSync(options.dir)
+      fse.ensureDirSync(docsDir)
+      fse.emptyDirSync(docsDir)
+      fse.copySync(options.dir, docsDir)
     },
   } as Plugin
 }
@@ -81,7 +84,7 @@ export default defineConfig({
     'import.meta.env._buildTime': Date.now()
   },
   build: {
-    outDir: isSSR ? 'dist/' : 'docs/nblog',
+    outDir: isSSR ? 'dist/ssr' : 'dist/nblog',
     minify: !isSSR,
   },
   optimizeDeps: {
