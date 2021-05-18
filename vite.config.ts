@@ -70,9 +70,9 @@ const criticalCss = () => {
           height: 1500,
         })
       }
-      fse.ensureDirSync(docsDir)
-      fse.emptyDirSync(docsDir)
-      fse.copySync(options.dir, docsDir)
+      // enable github page
+      await fse.emptyDir(docsDir)
+      await fse.copy(options.dir, docsDir)
     },
   } as Plugin
 }
