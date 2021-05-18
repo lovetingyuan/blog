@@ -1,8 +1,6 @@
 @import url('normalize.css');
 :root {
-  --theme-color: #019d57;
-  --theme-color-ll: #019d5730;
-  --theme-color-l: #019d57dd;
+
   --theme-bg-color: honeydew;
 }
 html,

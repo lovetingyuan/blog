@@ -17,14 +17,13 @@ const md = () => {
       if (id.endsWith('.md')) {
         const code = readFileSync(id, 'utf-8')
         const src = JSON.stringify(marked(code))
-        return `export default ${src};` + `
-        console.log(import.meta)
+        return `export default ${src};\n` + `
         if (import.meta.hot) {
-          import.meta.hot.accept((n) => {
-            console.log(3423, n)
+          import.meta.hot.accept((m) => {
+            window._hotUpdateBlog && window._hotUpdateBlog(import.meta, m)
           })
         }
-        `
+        `.replace(/\s/g, '')
       }
     },
   } as Plugin

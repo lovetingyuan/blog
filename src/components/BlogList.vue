@@ -9,31 +9,19 @@
       </router-link>
     </li>
   </transition-group>
-  <div v-else-if='error'>{{error}}</div>
-  <div v-else> Loading... </div>
+  <div v-else style="text-align: center; margin: 20vh 0;"> 暂无内容... </div>
 </template>
 
 <script lang="ts" setup>
-import { defineProps, watch, ref } from 'vue'
-import { getBlogArticleList, getAllBlogList } from '../blog'
+import { defineProps, watch, computed } from 'vue'
+import blogs from '../blogs'
 
 const props = defineProps({
   cate: String
 })
-const list = ref<string[]>([])
-const error = ref('')
+const list = computed<string[]>(() => blogs.articleList)
 watch(() => props.cate, (c) => {
-  error.value = ''
-  if (!c) {
-    list.value = getAllBlogList()
-  } else {
-    const articles = getBlogArticleList(c)
-    if (articles) {
-      list.value = articles
-    } else {
-      error.value = '请检查地址'
-    }
-  }
+  blogs.setCateArticle([c || '', ''])
 }, {
   immediate: true
 })

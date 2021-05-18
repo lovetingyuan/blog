@@ -23,7 +23,7 @@ import * as Prism from 'prismjs'
 import 'prismjs/components/prism-typescript'
 import 'github-markdown-css'
 
-import { getBlogContent } from '../blog'
+import blogs from '../blogs'
 
 const props = defineProps({
   cate: { type: String, required: true },
@@ -36,8 +36,11 @@ const directs = ref<string[]>([])
 const directsRef = ref<HTMLUListElement | null>(null)
 const blogContentRef = ref<HTMLElement | null>(null)
 
-watch(props, async ({ cate, article }) => {
-  const md = await getBlogContent(cate, article).catch(() => {
+const scrollTopHeight = ref('0px')
+
+watch([props, blogs.blogs], async ([{ cate, article }]) => {
+  blogs.setCateArticle([cate, article])
+  const md = await blogs.fetchBlogContent().catch(() => {
     return '获取失败，请检查地址'
   })
   blogContent.value = md;
@@ -51,8 +54,7 @@ watch(props, async ({ cate, article }) => {
   })
   if (directsRef.value) {
     const { height } = directsRef.value.getBoundingClientRect()
-    const root = document.documentElement
-    root.style.setProperty('--scroll-margin-top', height + 'px')
+    scrollTopHeight.value = height + 'px'
   }
 }, {
   deep: true,
@@ -72,6 +74,7 @@ watch(props, async ({ cate, article }) => {
     box-sizing: border-box;
     list-style-position: inside;
     z-index: 9;
+    border-bottom: 1px solid var(--theme-color-ll);
   }
   .blog-directs li {
     float: left;
@@ -86,7 +89,7 @@ watch(props, async ({ cate, article }) => {
 :target {
   color: var(--theme-color);
   text-shadow: 6px 3px 3px #ccc;
-  scroll-margin-top: var(--scroll-margin-top);
+  scroll-margin-top: v-bind(scrollTopHeight);
 }
 .markdown-body {
   margin: 20px;
@@ -95,7 +98,9 @@ watch(props, async ({ cate, article }) => {
 .markdown-body a {
   color: var(--theme-color);
 }
-
+.markdown-body hr {
+  background-color: var(--theme-color-ll);
+}
 .markdown-body ol ol, .markdown-body ol ul, .markdown-body ul ol, .markdown-body ul ul {
   margin-top: 0.5em;
 }
