@@ -1,32 +1,34 @@
 import { ref, watch } from 'vue'
 
-const root = document.documentElement
-const rootStyle = window.getComputedStyle(root)
-
 let defaultThemeColor = ''
+const themeColor = ref(defaultThemeColor)
 const cacheKey = '1:nblog:themeColor'
 
-const themeMeta = document.head.querySelector('meta[name="theme-color"]')
-if (themeMeta) {
-  defaultThemeColor = themeMeta.getAttribute('content') || ''
-} else {
-  defaultThemeColor = rootStyle.getPropertyValue('--theme-color').trim()
-}
-const themeColor = ref(defaultThemeColor)
-if (typeof localStorage === 'object') {
-  const storedThemeColor = localStorage.getItem(cacheKey)
-  if (storedThemeColor) {
-    themeColor.value = storedThemeColor
+if (typeof document === 'object') {
+  const root = document.documentElement
+  const rootStyle = window.getComputedStyle(root)
+  const themeMeta = document.head.querySelector('meta[name="theme-color"]')
+  if (themeMeta) {
+    themeColor.value = themeMeta.getAttribute('content') || ''
   } else {
-    themeColor.value = defaultThemeColor
+    themeColor.value = rootStyle.getPropertyValue('--theme-color').trim()
+  }
+  if (typeof localStorage === 'object') {
+    const storedThemeColor = localStorage.getItem(cacheKey)
+    if (storedThemeColor) {
+      themeColor.value = storedThemeColor
+    }
   }
 }
 
 let watched = false
 
 export default function useThemeColor() {
+  if (typeof document !== 'object') return themeColor
   if (watched) return themeColor
   watched = true
+  const root = document.documentElement
+  const themeMeta = document.head.querySelector('meta[name="theme-color"]')
   watch(themeColor, (tc) => {
     if (themeMeta) {
       themeMeta.setAttribute('content', tc)
