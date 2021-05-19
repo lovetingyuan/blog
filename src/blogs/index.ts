@@ -2,7 +2,7 @@ import { reactive } from 'vue'
 
 const store = reactive(new class {
   static namespace = 'blogs'
-  blogs = import.meta.glob('/src/blog/**/*.md')
+  blogs = import.meta.glob('./**/*.md')
   cate = ''
   article = ''
   fetchBlogContent = () => {

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <top-header></top-header>
+    <top-header title-text="庭院 ᥇ꪶꪮᧁ"></top-header>
     <hr />
     <main>
       <router-view v-slot="{ Component }">
@@ -11,7 +11,7 @@
     </main>
   </div>
   <footer>
-    <span>© tingyuan {{ time }}</span>
+    <span>© 𝘵𝘪𝘯𝘨𝘺𝘶𝘢𝘯 {{ time }}</span>
     &nbsp;
     <a
       href="https://github.com/lovetingyuan/nblog"

@@ -1,7 +1,7 @@
 <template>
   <header>
     <h3 class="title">
-      <router-link to="/" no-active>庭院 Blog</router-link>
+      <router-link to="/" no-active>{{props.titleText}}</router-link>
     </h3>
     <nav>
       <ul class="navbar">
@@ -13,12 +13,13 @@
             autocomplete="on"
             placeholder="搜索@github"
             class="searchinput"
-            v-model="keyword"
+            v-model.trim="keyword"
             @keyup.enter="handleSearch"
           >
         </li>
         <li class="navbar-item">
           <input type="color" v-model="themeColor" title="主题色">
+          <input type="color" v-model="bgColor" title="背景色">
         </li>
       </ul>
     </nav>
@@ -26,22 +27,29 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, defineProps, ref } from 'vue'
 import blogs from '../blogs'
 import useThemeColor from '../useThemeColor'
+import useCssVars from '../useCssVars'
 
+const props = defineProps({
+  titleText: {
+    type: String
+  }
+})
 const keyword = ref('')
 const cateList = computed(() => blogs.cateList)
 const handleSearch = () => {
-  if (keyword.value.trim()) {
-    const kw = keyword.value.trim()
+  if (keyword.value) {
+    const searchParam = `q=${keyword.value}+path%3Ablog+extension%3Amd`
     keyword.value = ''
-    const searchParam = `q=${kw}+path%3Ablog+extension%3Amd`
     window.open(`https://github.com/lovetingyuan/nblog/search?` + (searchParam))
   }
 }
 const themeColor = useThemeColor()
+const bgColor = useCssVars('bg-color', 'honeydew')
 </script>
+
 <style scoped>
 
 .title {
@@ -76,6 +84,11 @@ header a  {
   border: 1px solid var(--theme-color);
   text-decoration: none;
   transition: background-color .2s;
+}
+.router-link-active.navbar-item_link {
+  background-color: var(--theme-color-l);
+  color: white;
+  font-weight: bold;
 }
 .navbar-item_link:hover {
   background-color: var(--theme-color-ll);

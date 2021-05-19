@@ -33,10 +33,11 @@ watch(() => props.cate, (c) => {
     margin: 40px 0;
   }
   .blog-title {
-    font-size: 1.2em;
+    font-size: 1.1em;
     width: fit-content;
     font-weight: 500;
     margin: 15px 0;
+    text-transform: capitalize;
   }
   .blog-title:hover {
     font-weight: 600;

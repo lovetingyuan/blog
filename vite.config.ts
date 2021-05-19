@@ -9,8 +9,6 @@ import { createDocument } from 'domino'
 import critical from 'critical'
 import fse from 'fs-extra'
 
-const docsDir = resolve(__dirname, 'docs')
-
 const isSSR = process.argv.includes('--ssr')
 
 const md = () => {
@@ -71,6 +69,7 @@ const criticalCss = () => {
         })
       }
       // enable github page
+      const docsDir = resolve(__dirname, 'docs')
       await fse.emptyDir(docsDir)
       await fse.copy(options.dir, docsDir)
     },

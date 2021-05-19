@@ -1,8 +1,5 @@
 @import url('normalize.css');
-:root {
 
-  --theme-bg-color: honeydew;
-}
 html,
 body {
   scroll-behavior: smooth;
@@ -12,7 +9,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  background-color: var(--theme-bg-color);
+  background-color: var(--bg-color);
 }
 hr {
   border-color: var(--theme-color);
