@@ -6,33 +6,27 @@ const CacheNs = '1:nblog:'
 const CacheMap: Record<string, Ref<any>> = {}
 
 export default function (key: string, val?: any) {
+  if (typeof localStorage !== 'object') return ref(null)
   const name = CacheNs + key
+  if (!CacheMap[key]) {
+    CacheMap[key] = ref(null)
+    watch(CacheMap[key], v => {
+      if (v === null) {
+        localStorage.removeItem(name)
+      } else {
+        localStorage.setItem(name, JSON.stringify(v))
+      }
+    })
+  }
+  const valRef = CacheMap[key]
+
   if (arguments.length === 1) {
-    let value = localStorage.getItem(name)
-    if (value !== null) {
-      value = JSON.parse(value)
+    val = localStorage.getItem(name)
+    if (val !== null) {
+      val = JSON.parse(val)
     }
-    if (CacheMap[key]) {
-      CacheMap[key].value = value
-    } else {
-      CacheMap[key] = ref(value)
-    }
-    return CacheMap[key]
   }
-  if (CacheMap[key]) {
-    CacheMap[key].value = val
-    return CacheMap[key]
-  }
-  const valRef: Ref<any> = ref(val)
-  watch(valRef, v => {
-    if (v === null) {
-      localStorage.removeItem(name)
-    } else {
-      localStorage.setItem(name, JSON.stringify(v))
-    }
-  }, {
-    immediate: true
-  })
-  CacheMap[key] = valRef
+  valRef.value = val
+
   return valRef
 }

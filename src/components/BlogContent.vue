@@ -67,7 +67,7 @@ watch([props, blogs.blogs], async ([{ cate, article }]) => {
   .blog-directs {
     position: sticky;
     top: 0;
-    background-color: var(--theme-bg-color);
+    background-color: var(--bg-color);
     overflow: hidden;
     padding: 20px 0;
     margin: 0;
