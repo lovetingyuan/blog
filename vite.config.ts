@@ -10,8 +10,6 @@ import critical from 'critical'
 import fse from 'fs-extra'
 
 const isSSR = process.argv.includes('--ssr')
-const docsDir = resolve(__dirname, 'docs')
-const blogsDir = resolve(__dirname, 'src/blogs')
 
 const md = () => {
   return {
@@ -78,9 +76,10 @@ const criticalCss = () => {
           height: 1500,
         })
       }
+      const docsDir = resolve(__dirname, 'docs')
       // enable github page
-      await fse.copy(blogsDir, resolve(options.dir, 'blogs'), {
-        filter(src, dest) {
+      await fse.copy(resolve(__dirname, 'src/blogs'), resolve(options.dir, 'blogs'), {
+        filter(src: string, dest: string) {
           if (lstatSync(src).isDirectory()) return true
           if (src.endsWith('.md')) {
             const mdContent = readFileSync(src, 'utf-8')
