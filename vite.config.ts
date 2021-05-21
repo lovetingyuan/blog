@@ -48,6 +48,9 @@ const prerender = () => {
           const createApp = require('./dist/ssr/server').default
           const doc = createDocument(html)
           const ssrContent = await createApp()
+          const buildTime = doc.createElement('script')
+          buildTime.textContent = 'window._buildTime = ' + Date.now()
+          doc.head.appendChild(buildTime)
           doc.getElementById('app').innerHTML = ssrContent
           return '<!DOCTYPE html>' + doc.documentElement.outerHTML
         } catch (e) {
@@ -98,9 +101,6 @@ const criticalCss = () => {
 export default defineConfig({
   plugins: [vue(), md(), prerender(), criticalCss()],
   base: '/nblog/',
-  define: {
-    'import.meta.env._buildTime': Date.now()
-  },
   build: {
     outDir: isSSR ? 'dist/ssr' : 'dist/nblog',
     minify: !isSSR,

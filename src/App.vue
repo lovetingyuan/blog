@@ -27,8 +27,8 @@
 <script lang="ts" setup>
 import TopHeader from "./components/Header.vue";
 let time = new Date().getFullYear() + "";
-if (typeof import.meta.env._buildTime === 'number') {
-  time = new Date(import.meta.env._buildTime as unknown as number).toLocaleString();
+if (typeof window === 'object' && typeof (window as any)._buildTime === 'number') {
+  time = new Date((window as any)._buildTime as unknown as number).toLocaleString();
 }
 </script>
 
