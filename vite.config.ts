@@ -79,7 +79,7 @@ const criticalCss = () => {
       const docsDir = resolve(__dirname, 'docs')
       // enable github page
       await fse.copy(resolve(__dirname, 'src/blogs'), resolve(options.dir, 'blogs'), {
-        filter(src: string, dest: string) {
+        filter(src, dest) {
           if (lstatSync(src).isDirectory()) return true
           if (src.endsWith('.md')) {
             const mdContent = readFileSync(src, 'utf-8')
