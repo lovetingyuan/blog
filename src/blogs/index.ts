@@ -4,29 +4,24 @@ type DSM = { default: string }
 
 const mdCache: Record<string, DSM> = {}
 
-const fetchMd = (importMap: ReturnType<ImportMeta["glob"]>) => {
-  if (import.meta.env.DEV) {
-    return importMap
-  }
-  const fetchMdMap: Record<string, () => Promise<DSM>> = {}
-  Object.keys(importMap).forEach(k => {
-    fetchMdMap[k] = () => {
+const fetchMd = () => {
+  const importMap = import.meta.glob('./**/*.md')
+  if (import.meta.env.DEV) return importMap
+  return Object.keys(importMap).reduce((map, k) => {
+    map[k] = () => {
       const url = k.replace('./', import.meta.env.BASE_URL + 'blogs/').replace('.md', '.html')
       if (mdCache[url]) {
         return Promise.resolve(mdCache[url])
       }
-      return fetch(url).then(r => r.text()).then(v => {
-        mdCache[url] = { default: v }
-        return mdCache[url]
-      })
+      return fetch(url).then(r => r.text()).then(v => (mdCache[url] = { default: v }))
     }
-  })
-  return fetchMdMap
+    return map
+  }, {} as Record<string, () => Promise<DSM>>)
 }
 
 const store = reactive(new class {
   static namespace = 'blogs'
-  blogs = fetchMd(import.meta.glob('./**/*.md'))
+  blogs = fetchMd()
   cate = ''
   article = ''
   fetchBlogContent = () => {

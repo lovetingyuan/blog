@@ -29,7 +29,7 @@ const md = () => {
         `.replace(/\s/g, '')
       }
     },
-    generateBundle(options, bundles) { // not called during build
+    generateBundle(options, bundles) {
       Object.keys(bundles).forEach(f => {
         const bundle = bundles[f];
         if (bundle.type === 'chunk' && (bundle.facadeModuleId || '').endsWith('.md')) {
