@@ -1,8 +1,32 @@
 import { reactive } from 'vue'
 
+type DSM = { default: string }
+
+const mdCache: Record<string, DSM> = {}
+
+const fetchMd = (importMap: ReturnType<ImportMeta["glob"]>) => {
+  if (import.meta.env.DEV) {
+    return importMap
+  }
+  const fetchMdMap: Record<string, () => Promise<DSM>> = {}
+  Object.keys(importMap).forEach(k => {
+    fetchMdMap[k] = () => {
+      const url = k.replace('./', import.meta.env.BASE_URL + 'blogs/').replace('.md', '.html')
+      if (mdCache[url]) {
+        return Promise.resolve(mdCache[url])
+      }
+      return fetch(url).then(r => r.text()).then(v => {
+        mdCache[url] = { default: v }
+        return mdCache[url]
+      })
+    }
+  })
+  return fetchMdMap
+}
+
 const store = reactive(new class {
   static namespace = 'blogs'
-  blogs = import.meta.glob('./**/*.md')
+  blogs = fetchMd(import.meta.glob('./**/*.md'))
   cate = ''
   article = ''
   fetchBlogContent = () => {
@@ -35,7 +59,7 @@ const store = reactive(new class {
   get blogsMap() {
     const blogsMap: {
       [k: string]: {
-        [k: string]: (() => Promise<{ default: string }>)
+        [k: string]: (() => Promise<DSM>)
       }
     } = {}
     const { blogs } = this
@@ -66,9 +90,9 @@ const store = reactive(new class {
 if (import.meta.env.DEV) {
   console.log('store', store)
   if (typeof window === 'object' && import.meta.hot) {
-    (window as any)._hotUpdateBlog = (meta: ImportMeta, module: { default: string }) => {
+    (window as any)._hotUpdateBlog = (meta: ImportMeta, module: DSM) => {
       const { pathname } = new URL(meta.url)
-      const mdPath = pathname.replace(import.meta.env.BASE_URL, '/')
+      const mdPath = decodeURIComponent(pathname.replace(import.meta.env.BASE_URL, '/'))
       store.blogs[mdPath] = () => Promise.resolve(module)
     }
   }

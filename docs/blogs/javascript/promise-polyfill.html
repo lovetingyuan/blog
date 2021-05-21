@@ -1,0 +1,192 @@
+<h2 id="promise的polyfill实现">Promise的polyfill实现</h2>
+<pre><code class="language-javascript">// 用来resolve一个值，这个值可能是pomise,thenable或者其他
+function resolveValue (promise, value, resolve, reject) {
+  if (promise === value) { // 不能resolve自身
+    return reject(new TypeError(&#39;Can not resolve or return the current promise.&#39;))
+  }
+  if (value === null || (typeof value !== &#39;object&#39; &amp;&amp; typeof value !== &#39;function&#39;)) {
+    return resolve(value)
+  }
+  let then // thenable可能是对象或者函数，它的then只能读取一次并且需要捕获可能的错误
+  try {
+    then = value.then
+  } catch (err) {
+    return reject(err)
+  }
+  if (typeof then !== &#39;function&#39;) return resolve(value)
+  let called = false // 所有的回调只能调用一次
+  try { // 处理thenable，当然promise本身也是thenable
+    then.call(value, val =&gt; {
+      if (called) return
+      called = true
+      resolveValue(promise, val, resolve, reject) // 需要递归resolve，因为可能多次返回thenable
+    }, err =&gt; {
+      if (called) return
+      called = true
+      reject(err) // reject就直接调用即可
+    })
+  } catch (err) {
+    if (!called) reject(err)
+  }
+}
+
+function Promise (callback) {
+  if (!(this instanceof Promise)) throw new TypeError(&#39;Promise cannot be invoked without &quot;new&quot;.&#39;)
+  if (typeof callback !== &#39;function&#39;) throw new TypeError(&#39;Promise callback is not a function.&#39;)
+  this._status = &#39;pending&#39;
+  this._value = undefined
+  this._callbacks = { resolved: [], rejected: [] }
+  const settle = (status, value) =&gt; {
+    this._value = value
+    this._status = status
+    this._callbacks[status].forEach(cb =&gt; cb(value))
+  }
+  let called = false
+  const onResolve = value =&gt; {
+    if (called) return
+    called = true
+    resolveValue(this, value, val =&gt; settle(&#39;resolved&#39;, val), err =&gt; settle(&#39;rejected&#39;, err))
+  }
+  const onReject = err =&gt; {
+    if (called) return
+    called = true
+    settle(&#39;rejected&#39;, err)
+  }
+  try {
+    callback(onResolve, onReject)
+  } catch (err) {
+    onReject(err)
+  }
+}
+
+Promise.prototype.then = function then (onResolve, onReject) {
+  const handleCallback = (promise, status, resolve, reject) =&gt; {
+    const callback = status === &#39;resolved&#39; ? onResolve : onReject
+    const settle = status === &#39;resolved&#39; ? resolve : reject
+    setTimeout(() =&gt; { // then的回调需要延迟执行，实际应该放到微任务队列中
+      try {
+        if (typeof callback === &#39;function&#39;) {
+          resolveValue(promise, callback(this._value), resolve, reject)
+        } else {
+          settle(this._value)
+        }
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
+  let promise // then必须返回一个新的promise
+  if (this._status === &#39;pending&#39;) { // 如果是异步执行需要先把回调存储在队列中
+    promise = new Promise((resolve, reject) =&gt; {
+      this._callbacks.resolved.push(() =&gt; handleCallback(promise, &#39;resolved&#39;, resolve, reject))
+      this._callbacks.rejected.push(() =&gt; handleCallback(promise, &#39;rejected&#39;, resolve, reject))
+    })
+  } else {
+    let resolve, reject
+    promise = new Promise((...args) =&gt; [resolve, reject] = args)
+    handleCallback(promise, this._status, resolve, reject)
+  }
+  return promise
+}
+</code></pre>
+<hr>
+<p>以上是对<code>Promise</code>的简单实现，实际上Promise/A+规范只要求实例对象必须要有then方法，ES规范中还规定了一些静态和实例方法，这些都可以依赖Promise核心来实现</p>
+<ul>
+<li><code>Promise.prototype.catch</code><pre><code class="language-javascript">Promise.prototype.catch = function (onReject) {
+  return this.then(null, onReject)
+}
+</code></pre>
+</li>
+<li><code>Promise.prototype.finally</code><pre><code class="language-javascript">Promise.prototype.finally = function (callback) {
+  return this.then(val =&gt; {
+    return Promise.resolve(callback()).then(() =&gt; val)
+  }, err =&gt; {
+    return Promise.resolve(callback()).then(() =&gt; { throw err })
+  })
+}
+</code></pre>
+</li>
+<li><code>Promise.resolve</code> &amp; <code>Promise.reject</code><pre><code class="language-javascript">Promise.resolve = function resolve (val) {
+  return val instanceof Promise ? val : new Promise((resolve) =&gt; resolve(val))
+}
+Promise.reject = function reject (reason) {
+  return new Promise((_, reject) =&gt; reject(reason))
+}
+</code></pre>
+</li>
+<li><code>Promise.all</code><pre><code class="language-javascript">Promise.all = function all (values) {
+  return new Promise((resolve, reject) =&gt; {
+    // 实际上这里的values只要是可迭代对象就可以，这里简化了判断，其他方法也一样
+    if (!Array.isArray(values)) throw new TypeError(&#39;Promise.all only accepts iterable value.&#39;)
+    const resolvedValues = [], len = values.length
+    if (len === 0) return resolve(resolvedValues)
+    for (let i = 0; i &lt; len; i++) {
+      Promise.resolve(values[i]).then(val =&gt; {
+        resolvedValues[i] = val
+        if (i === len - 1) {
+          resolve(resolvedValues)
+        }
+      }, err =&gt; {
+        reject(err) // 一旦错过就不再
+      })
+    }
+  })
+}
+</code></pre>
+</li>
+<li><code>Promise.allSettled</code><pre><code class="language-javascript">Promise.allSettled = function allSettled (values) {
+  return new Promise((resolve) =&gt; {
+    if (!Array.isArray(values)) throw new TypeError(&#39;Promise.allSettled only accepts iterable value.&#39;)
+    const resolvedValues = [], len = values.length
+    if (len === 0) return resolve(resolvedValues)
+    for (let i = 0; i &lt; len; i++) {
+      Promise.resolve(values[i]).then(val =&gt; {
+        resolvedValues[i] = {
+          status: &#39;fulfilled&#39;, value: val
+        }
+        if (i === len - 1) {
+          resolve(resolvedValues)
+        }
+      }, err =&gt; {
+        resolvedValues[i] = {
+          status: &#39;rejected&#39;, reason: err
+        }
+        if (i === len - 1) {
+          resolve(resolvedValues)
+        }
+      })
+    }
+  })
+}
+</code></pre>
+</li>
+<li><code>Promise.race</code>，谁先结束就返回谁<pre><code class="language-javascript">Promise.race = function race (values) {
+  return new Promise((resolve, reject) =&gt; {
+    if (!Array.isArray(values)) throw new TypeError(&#39;Promise.race only accepts iterable value.&#39;)
+    for (let i = 0; i &lt; values.length; i++) {
+      Promise.resolve(values[i]).then(resolve, reject)
+    }
+  })
+}
+</code></pre>
+</li>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/any"><code>Promise.any</code></a>，和<code>Promise.all</code>在功能上是相反的，会尝试返回第一个成功的promise，如果都失败那就以<code>AggregateError</code>来reject<pre><code class="language-javascript">Promise.any = function any (values) {
+  return new Promise((resolve, reject) =&gt; {
+    if (!Array.isArray(values)) throw new TypeError(&#39;Promise.any only accepts iterable value.&#39;)
+    const resolvedReasons = [], len = values.length
+    if (len === 0) return reject(new AggregateError(resolvedReasons, &#39;All promises were rejected&#39;))
+    for (let i = 0; i &lt; len; i++) {
+      Promise.resolve(values[i]).then(val =&gt; {
+        resolve(val)
+      }, err =&gt; {
+        resolvedReasons[i] = err
+        if (i === len - 1) {
+          reject(new AggregateError(resolvedReasons, &#39;All promises were rejected&#39;))
+        }
+      })
+    }
+  })
+}
+</code></pre>
+</li>
+</ul>

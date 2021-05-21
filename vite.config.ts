@@ -3,13 +3,15 @@ import type { Plugin } from 'vite'
 import type { OutputAsset } from 'rollup'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
-import { readFileSync } from 'fs'
+import { readFileSync, lstatSync } from 'fs'
 import marked from 'marked'
 import { createDocument } from 'domino'
 import critical from 'critical'
 import fse from 'fs-extra'
 
 const isSSR = process.argv.includes('--ssr')
+const docsDir = resolve(__dirname, 'docs')
+const blogsDir = resolve(__dirname, 'src/blogs')
 
 const md = () => {
   return {
@@ -26,6 +28,14 @@ const md = () => {
         }
         `.replace(/\s/g, '')
       }
+    },
+    generateBundle(options, bundles) { // not called during build
+      Object.keys(bundles).forEach(f => {
+        const bundle = bundles[f];
+        if (bundle.type === 'chunk' && (bundle.facadeModuleId || '').endsWith('.md')) {
+          delete bundles[f]
+        }
+      })
     },
   } as Plugin
 }
@@ -69,7 +79,17 @@ const criticalCss = () => {
         })
       }
       // enable github page
-      const docsDir = resolve(__dirname, 'docs')
+      await fse.copy(blogsDir, resolve(options.dir, 'blogs'), {
+        filter(src, dest) {
+          if (lstatSync(src).isDirectory()) return true
+          if (src.endsWith('.md')) {
+            const mdContent = readFileSync(src, 'utf-8')
+            const html = marked(mdContent)
+            fse.outputFileSync(dest.replace('.md', '.html'), html)
+          }
+          return false
+        }
+      })
       await fse.emptyDir(docsDir)
       await fse.copy(options.dir, docsDir)
     },
