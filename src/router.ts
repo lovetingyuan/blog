@@ -8,7 +8,7 @@ const NotFound = {
   name: 'NotFound',
   render() {
     return h('h3', {
-      style: 'margin: 10vh 0; text-align: center'
+      style: 'margin: 20vh 0; text-align: center'
     }, ['页面找不到，请检查地址'])
   }
 }

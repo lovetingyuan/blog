@@ -6,7 +6,10 @@
     <nav>
       <ul class="navbar">
         <li v-for="cate of cateList" :key="cate.name" class="navbar-item">
-          <router-link :to="'/' + cate.name" class="navbar-item_link">{{cate.name}} {{cate.count}}</router-link>
+          <router-link :to="'/' + cate.name" class="navbar-item_link">
+            {{cate.name}}
+            <span style="font-size: .9em; vertical-align: super;">{{cate.count}}</span>
+          </router-link>
         </li>
         <li class="navbar-item">
           <input type="text"
@@ -17,10 +20,6 @@
             @keyup.enter="handleSearch"
           >
         </li>
-        <li class="navbar-item">
-          <input type="color" v-model="themeColor" title="主题色">
-          <input type="color" v-model="bgColor" title="背景色">
-        </li>
       </ul>
     </nav>
   </header>
@@ -29,8 +28,6 @@
 <script lang="ts" setup>
 import { computed, defineProps, ref } from 'vue'
 import blogs from '../blogs'
-import useThemeColor from '../useThemeColor'
-import useCssVars from '../useCssVars'
 
 const props = defineProps({
   titleText: {
@@ -46,25 +43,25 @@ const handleSearch = () => {
     window.open(`https://github.com/lovetingyuan/nblog/search?` + (searchParam))
   }
 }
-const themeColor = useThemeColor()
-const bgColor = useCssVars('bg-color', 'honeydew')
+
 </script>
 
 <style scoped>
 
 .title {
-  float: left;
   margin: 6px;
+  position: fixed;
+  left: 20px;
 }
 .title a {
   color: var(--theme-color);
 }
 header {
-  padding-top: 30px;
+  padding-top: 20px;
+  padding-bottom: 10px;
+  user-select: none;
 }
-header a  {
-  color: #555;
-}
+
 .navbar {
   list-style: none;
   margin: 0;
@@ -73,39 +70,40 @@ header a  {
 }
 .navbar-item {
   float: left;
-  margin: 6px 10px;
-  text-transform: capitalize;
+  margin: 5px;
+  text-transform: uppercase;
 }
 .navbar-item_link {
   display: inline-block;
   padding: 4px 14px;
-  font-size: 14px;
-  border-radius: 100px;
-  border: 1px solid var(--theme-color);
+  font-size: 16px;
   text-decoration: none;
-  transition: background-color .2s;
 }
 .router-link-active.navbar-item_link {
-  background-color: var(--theme-color-l);
-  color: white;
+  text-shadow: 4px 2px 3px #ddd;
   font-weight: bold;
 }
 .navbar-item_link:hover {
-  background-color: var(--theme-color-ll);
+  text-shadow: 4px 2px 3px #ddd;
 }
 .searchinput {
   padding: 5px 12px;
   font-size: .9em;
   border-radius: 100px 100px;
+  margin-left: 20px;
   outline: none;
-  border: 1px solid #aaa;
+  border: 1px solid var(--text-color);
   width: 100px;
   transition: width .3s;
 }
 .searchinput:focus {
-  box-shadow: 0 0 4px 0px var(--theme-color);
-  border-color: var(--theme-color);
+  box-shadow: 0 0 4px 0px var(--text-color);
+  border-color: var(--text-color);
   width: 160px;
+}
+
+.light-dark {
+  cursor: pointer;
 }
 input[type=color] {
   display: inline-block;

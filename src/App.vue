@@ -1,37 +1,73 @@
 <template>
-  <div class="container">
-    <top-header title-text="庭院 𝔟𝔩𝔬𝔤"></top-header>
-    <hr />
-    <main>
-      <router-view v-slot="{ Component }">
-        <transition name="fade" mode="out-in" appear>
-          <component :is="Component" />
-        </transition>
-      </router-view>
-    </main>
+  <input type="checkbox" hidden v-model="isLightMode" id="lightDarkMode">
+  <label for="lightDarkMode" class="light-dark"></label>
+  <div class="app-container">
+    <div class="container">
+      <top-header title-text="庭院 𝔟𝔩𝔬𝔤"></top-header>
+      <hr />
+      <main>
+        <router-view v-slot="{ Component }">
+          <transition name="fade" mode="out-in" appear>
+            <component :is="Component" />
+          </transition>
+        </router-view>
+      </main>
+    </div>
+    <footer>
+      <span>© 𝘵𝘪𝘯𝘨𝘺𝘶𝘢𝘯 {{ time }}</span>
+      &nbsp;
+      <a
+        href="https://github.com/lovetingyuan/nblog"
+        target="_blank"
+        title="github"
+        rel="noopener noreferrer"
+      >
+        <img src="./assets/github.svg" width="14" height="14" alt="github" />
+      </a>
+    </footer>
   </div>
-  <footer>
-    <span>© 𝘵𝘪𝘯𝘨𝘺𝘶𝘢𝘯 {{ time }}</span>
-    &nbsp;
-    <a
-      href="https://github.com/lovetingyuan/nblog"
-      target="_blank"
-      title="github"
-      rel="noopener noreferrer"
-    >
-      <img src="./assets/github.svg" width="14" height="14" alt="github" />
-    </a>
-  </footer>
 </template>
 
 <script lang="ts" setup>
 import TopHeader from "./components/Header.vue";
+import useStorage from "./useStorage";
 let time = new Date().getFullYear() + "";
 if (typeof window === 'object' && typeof (window as any)._buildTime === 'number') {
   time = new Date((window as any)._buildTime as unknown as number).toLocaleString();
 }
-</script>
 
+const isLightMode = useStorage('is-light-mode', true)
+</script>
+<style>
+.light-dark {
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  cursor: pointer;
+  display: inline-block;
+  padding: 5px;
+}
+.light-dark::before {
+  content: '🌑';
+}
+#lightDarkMode:checked ~ .light-dark::before {
+  content: '☀️';
+}
+#lightDarkMode ~ .app-container {
+  --text-color: white;
+  --bg-color: #222;
+  --link-color: rgb(188, 188, 248);
+}
+#lightDarkMode:checked ~ .app-container {
+  --text-color: #222;
+  --bg-color: white;
+  --link-color: rgb(0, 87, 144);
+}
+.app-container {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+</style>
 <style scoped>
 .container {
   width: 88%;

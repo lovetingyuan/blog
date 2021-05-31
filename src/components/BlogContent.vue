@@ -41,7 +41,7 @@ const scrollTopHeight = ref('0px')
 watch([props, blogs.blogs], async ([{ cate, article }]) => {
   blogs.setCateArticle([cate, article])
   const md = await blogs.fetchBlogContent().catch(() => {
-    return '获取失败，请检查地址'
+    return '<h3 style="text-align: center">获取失败，请检查地址</h3>'
   })
   blogContent.value = md;
   await nextTick()
@@ -93,6 +93,14 @@ watch([props, blogs.blogs], async ([{ cate, article }]) => {
 }
 .markdown-body {
   margin: 20px;
+  color: var(--text-color);
+}
+.markdown-body * {
+  color: var(--text-color);
+}
+
+.markdown-body table td, .markdown-body table tr, .markdown-body table th {
+  background-color: var(--bg-color);
 }
 
 .markdown-body a {
@@ -112,6 +120,8 @@ watch([props, blogs.blogs], async ([{ cate, article }]) => {
 }
 .markdown-body pre {
   margin: 20px 0;
+  font-size: 1.05em;
+  line-height: 1.6em;
 }
 .markdown-body pre code {
   margin: 20px 0;

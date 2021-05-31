@@ -7,5 +7,7 @@ export default () => {
   const app = createSSRApp(App)
   const router = createRouter()
   app.use(router)
-  return renderToString(app)
+  return router.isReady().then(() => {
+    return renderToString(app)
+  })
 }
