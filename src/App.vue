@@ -37,8 +37,10 @@ if (typeof window === 'object' && typeof (window as any)._buildTime === 'number'
 }
 
 const isLightMode = useStorage('is-light-mode', true)
+
 </script>
 <style>
+
 .light-dark {
   position: fixed;
   right: 10px;
@@ -53,24 +55,29 @@ const isLightMode = useStorage('is-light-mode', true)
 #lightDarkMode:checked ~ .light-dark::before {
   content: '☀️';
 }
-#lightDarkMode ~ .app-container {
-  --text-color: white;
-  --bg-color: #222;
-  --link-color: rgb(188, 188, 248);
-}
+
 #lightDarkMode:checked ~ .app-container {
   --text-color: #222;
   --bg-color: white;
   --link-color: rgb(0, 87, 144);
 }
+#lightDarkMode ~ .app-container {
+  --text-color: white;
+  --bg-color: #222;
+  --link-color: rgb(188, 188, 248);
+}
 .app-container {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   background-color: var(--bg-color);
   color: var(--text-color);
+  transition: all .3s;
 }
 </style>
 <style scoped>
 .container {
-  width: 88%;
+  width: 80%;
   min-width: 300px;
   max-width: 900px;
   margin: 0 auto;
@@ -84,7 +91,7 @@ const isLightMode = useStorage('is-light-mode', true)
   font-size: 1.6em;
   font-weight: bold;
 }
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 1100px) {
   .container {
     width: 90%;
   }

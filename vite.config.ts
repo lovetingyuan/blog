@@ -15,6 +15,9 @@ const md = () => {
   return {
     name: 'md-plugin',
     load(id) {
+      if (id.endsWith('.css?raw')) {
+        console.log(99, id)
+      }
       if (id.endsWith('.md')) {
         const code = readFileSync(id, 'utf-8')
         const src = JSON.stringify(marked(code))
@@ -103,7 +106,15 @@ export default defineConfig({
     vue(),
     md(),
     prerender(),
-    criticalCss()
+    criticalCss(),
+    {
+      name: 'raw-css',
+      transform(code, id) {
+        if (id.endsWith('.css?raw') && code.startsWith('export default ')) {
+          return JSON.parse(code.slice('export default '.length))  
+        }
+      },
+    }
   ],
   base: '/nblog/',
   build: {

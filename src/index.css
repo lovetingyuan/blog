@@ -11,8 +11,9 @@ body {
 }
 hr {
   border-color: var(--text-color);
-  transform: scaleY(0.4);
+  transform: scaleY(0.3);
   border-top: 0 none;
+  opacity: .8;
 }
 a {
   text-decoration: none;

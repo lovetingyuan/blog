@@ -4,8 +4,8 @@
       <li v-for="title of directs" :key="title">
         <a :href="'#' + title">{{title}}</a>
       </li>
-      <li>
-        <a href="#">⬆</a>
+      <li style="margin: 0">
+        <a href="#" class="up-arrow">⬆</a>
       </li>
     </ul>
     <article v-if="blogContent" id="blog-content" class="markdown-body" ref="blogContentRef" v-html="blogContent">
@@ -18,13 +18,26 @@
 
 <script lang="ts" setup>
 import { watch, ref, nextTick, defineProps } from 'vue'
-import 'prismjs/themes/prism.css'
-import * as Prism from 'prismjs'
-import 'prismjs/components/prism-typescript'
 import 'github-markdown-css/github-markdown.css'
 
-import blogs from '../blogs'
+import lightCodeCss from 'prismjs/themes/prism-solarizedlight.css?raw'
+import darkCodeCss from 'prismjs/themes/prism-tomorrow.css?raw'
 
+import * as Prism from 'prismjs'
+import 'prismjs/components/prism-typescript'
+
+import blogs from '../blogs'
+import useStorage from '../useStorage'
+
+const codeThemeStyle = document.createElement('style')
+document.head.appendChild(codeThemeStyle)
+
+const isLightMode = useStorage('is-light-mode', true)
+watch(isLightMode, (light) => {
+  codeThemeStyle.textContent = light ? lightCodeCss : darkCodeCss
+}, {
+  immediate: true
+})
 const props = defineProps({
   cate: { type: String, required: true },
   article: { type: String, required: true }
@@ -84,6 +97,10 @@ watch([props, blogs.blogs], async ([{ cate, article }]) => {
     float: right;
     list-style: none;
   }
+  .up-arrow {
+    display: inline-block;
+    font-size: 28px;
+  }
 </style>
 <style>
 :target {
@@ -93,9 +110,6 @@ watch([props, blogs.blogs], async ([{ cate, article }]) => {
 }
 .markdown-body {
   margin: 20px;
-  color: var(--text-color);
-}
-.markdown-body * {
   color: var(--text-color);
 }
 
@@ -126,6 +140,7 @@ watch([props, blogs.blogs], async ([{ cate, article }]) => {
 .markdown-body pre code {
   margin: 20px 0;
   font-weight: normal;
+  transition: all .3s;
 }
 .markdown-body li > p {
   margin: 10px 0;

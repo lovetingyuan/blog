@@ -52,6 +52,7 @@ const handleSearch = () => {
   margin: 6px;
   position: fixed;
   left: 20px;
+  user-select: none;
 }
 .title a {
   color: var(--theme-color);
@@ -70,8 +71,11 @@ header {
 }
 .navbar-item {
   float: left;
-  margin: 5px;
+  margin: 4px;
   text-transform: uppercase;
+}
+.navbar-item:last-child {
+  float: right;
 }
 .navbar-item_link {
   display: inline-block;
@@ -80,36 +84,34 @@ header {
   text-decoration: none;
 }
 .router-link-active.navbar-item_link {
-  text-shadow: 4px 2px 3px #ddd;
   font-weight: bold;
 }
 .navbar-item_link:hover {
-  text-shadow: 4px 2px 3px #ddd;
+  font-weight: bold;
 }
 .searchinput {
-  padding: 5px 12px;
+  padding: 5px 14px;
   font-size: .9em;
   border-radius: 100px 100px;
-  margin-left: 20px;
   outline: none;
-  border: 1px solid var(--text-color);
+  border: 1px solid #999;
   width: 100px;
   transition: width .3s;
+  position: relative;
+  top: 4px;
+  left: -10px;
 }
 .searchinput:focus {
-  box-shadow: 0 0 4px 0px var(--text-color);
-  border-color: var(--text-color);
+  box-shadow: 0 0 4px 0px #999;
+  border-color: #666;
   width: 160px;
 }
-
-.light-dark {
-  cursor: pointer;
-}
-input[type=color] {
-  display: inline-block;
-  border: none;
-  padding: 0;
-  background: transparent;
-  width: 20px;
+@media screen and (max-width: 1100px) {
+  .title {
+    writing-mode: vertical-rl;
+    left: 10px;
+  }
 }
 </style>
+
+
