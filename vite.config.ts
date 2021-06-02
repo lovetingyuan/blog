@@ -99,7 +99,12 @@ const criticalCss = () => {
 }
 
 export default defineConfig({
-  plugins: [vue(), md(), prerender(), criticalCss()],
+  plugins: [
+    vue(),
+    md(),
+    prerender(),
+    criticalCss()
+  ],
   base: '/nblog/',
   build: {
     outDir: isSSR ? 'dist/ssr' : 'dist/nblog',

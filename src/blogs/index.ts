@@ -36,12 +36,14 @@ const store = reactive(new class {
   setCateArticle([cate, article]: [string, string]) {
     this.cate = cate
     this.article = article
-    document.title = 'Blog'
-    if (cate) {
-      document.title += ' - ' + cate
-    }
-    if (article) {
-      document.title += ' - ' + article
+    if (typeof document === 'object') {
+      document.title = 'Blog'
+      if (cate) {
+        document.title += ' - ' + cate
+      }
+      if (article) {
+        document.title += ' - ' + article
+      }
     }
   }
   get articleList() {
