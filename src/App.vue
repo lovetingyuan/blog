@@ -3,7 +3,7 @@
   <label for="lightDarkMode" class="light-dark"></label>
   <div class="app-container">
     <div class="container">
-      <top-header title-text="庭院 𝔟𝔩𝔬𝔤"></top-header>
+      <top-header title-text="庭院 Ⴆʅσɠ"></top-header>
       <hr />
       <main>
         <router-view v-slot="{ Component }">
