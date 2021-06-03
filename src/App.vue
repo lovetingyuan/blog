@@ -1,5 +1,5 @@
 <template>
-  <input type="checkbox" hidden v-model="isLightMode" id="lightDarkMode">
+  <input type="checkbox" checked hidden v-model="isLightMode" id="lightDarkMode">
   <label for="lightDarkMode" class="light-dark"></label>
   <div class="app-container">
     <div class="container">
@@ -43,11 +43,12 @@ const isLightMode = useStorage('is-light-mode', true)
 
 .light-dark {
   position: fixed;
-  right: 10px;
+  right: 15px;
   top: 10px;
   cursor: pointer;
   display: inline-block;
   padding: 5px;
+  font-size: 1.4em;
 }
 .light-dark::before {
   content: '🌑';
@@ -64,7 +65,7 @@ const isLightMode = useStorage('is-light-mode', true)
 #lightDarkMode ~ .app-container {
   --text-color: white;
   --bg-color: #222;
-  --link-color: rgb(188, 188, 248);
+  --link-color: rgb(209, 209, 255);
 }
 .app-container {
   font-family: Avenir, Helvetica, Arial, sans-serif;

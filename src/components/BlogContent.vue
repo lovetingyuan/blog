@@ -30,6 +30,7 @@ import blogs from '../blogs'
 import useStorage from '../useStorage'
 
 const codeThemeStyle = document.createElement('style')
+codeThemeStyle.dataset.codeTheme = ''
 document.head.appendChild(codeThemeStyle)
 
 const isLightMode = useStorage('is-light-mode', true)
@@ -99,7 +100,8 @@ watch([props, blogs.blogs], async ([{ cate, article }]) => {
   }
   .up-arrow {
     display: inline-block;
-    font-size: 28px;
+    font-size: 24px;
+    user-select: none;
   }
 </style>
 <style>
