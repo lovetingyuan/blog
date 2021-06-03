@@ -51,7 +51,7 @@ const isLightMode = useStorage('is-light-mode', true)
   font-size: 1.4em;
 }
 .light-dark::before {
-  content: '🌑';
+  content: '🌒';
 }
 #lightDarkMode:checked ~ .light-dark::before {
   content: '☀️';
