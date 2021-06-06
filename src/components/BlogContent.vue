@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import { watch, ref, nextTick, defineProps } from 'vue'
+import { watch, ref, nextTick, defineProps, watchEffect } from 'vue'
 import 'github-markdown-css/github-markdown.css'
 
 import lightCodeCss from 'prismjs/themes/prism-solarizedlight.css?raw'
@@ -34,11 +34,7 @@ codeThemeStyle.dataset.codeTheme = ''
 document.head.appendChild(codeThemeStyle)
 
 const isLightMode = useStorage('is-light-mode', true)
-watch(isLightMode, (light) => {
-  codeThemeStyle.textContent = light ? lightCodeCss : darkCodeCss
-}, {
-  immediate: true
-})
+
 const props = defineProps({
   cate: { type: String, required: true },
   article: { type: String, required: true }
@@ -52,8 +48,9 @@ const blogContentRef = ref<HTMLElement | null>(null)
 
 const scrollTopHeight = ref('0px')
 
-watch([props, blogs.blogs], async ([{ cate, article }]) => {
-  blogs.setCateArticle([cate, article])
+watchEffect(async () => {
+  codeThemeStyle.textContent = isLightMode.value ? lightCodeCss : darkCodeCss
+  blogs.setCateArticle([props.cate, props.article])
   const md = await blogs.fetchBlogContent().catch(() => {
     return '<h3 style="text-align: center">获取失败，请检查地址</h3>'
   })
@@ -70,9 +67,20 @@ watch([props, blogs.blogs], async ([{ cate, article }]) => {
     const { height } = directsRef.value.getBoundingClientRect()
     scrollTopHeight.value = height + 'px'
   }
-}, {
-  deep: true,
-  immediate: true
+  el.querySelectorAll('pre').forEach(p => {
+    if (!p.hasAttribute('class')) {
+      p.classList.add('language-')
+    }
+  })
+  el.querySelectorAll('code').forEach(c => {
+    if (!c.hasAttribute('class')) {
+      if (c.parentElement?.tagName === 'PRE') {
+        c.classList.add('language-')
+      } else {
+        c.classList.add('-')
+      }
+    }
+  })
 })
 
 </script>
@@ -120,7 +128,8 @@ watch([props, blogs.blogs], async ([{ cate, article }]) => {
 }
 
 .markdown-body a {
-  color: var(--theme-color);
+  color: var(--link-color);
+  text-decoration: underline;
 }
 .markdown-body hr {
   background-color: var(--theme-color-ll);
@@ -149,5 +158,15 @@ watch([props, blogs.blogs], async ([{ cate, article }]) => {
 }
 .markdown-body li, .markdown-body p {
   line-height: 2em;
+}
+</style>
+
+<style>
+
+.dark-mode .markdown-body blockquote {
+  color: #aaa;
+}
+.dark-mode .markdown-body code[class="-"] {
+  background-color: #333;
 }
 </style>

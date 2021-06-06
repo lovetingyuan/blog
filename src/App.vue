@@ -29,6 +29,7 @@
 </template>
 
 <script lang="ts" setup>
+import { watchEffect } from "vue";
 import TopHeader from "./components/Header.vue";
 import useStorage from "./useStorage";
 let time = new Date().getFullYear() + "";
@@ -37,6 +38,12 @@ if (typeof window === 'object' && typeof (window as any)._buildTime === 'number'
 }
 
 const isLightMode = useStorage('is-light-mode', true)
+
+watchEffect(() => {
+  if (typeof document !== 'object') return
+  document.documentElement.classList.remove('light-mode', 'dark-mode')
+  document.documentElement.classList.add(isLightMode.value ? 'light-mode' : 'dark-mode')
+})
 
 </script>
 <style>
@@ -59,11 +66,11 @@ const isLightMode = useStorage('is-light-mode', true)
 
 #lightDarkMode:checked ~ .app-container {
   --text-color: #222;
-  --bg-color: white;
+  --bg-color: #efefef;
   --link-color: rgb(0, 87, 144);
 }
 #lightDarkMode ~ .app-container {
-  --text-color: white;
+  --text-color: #ddd;
   --bg-color: #222;
   --link-color: rgb(209, 209, 255);
 }
@@ -75,6 +82,7 @@ const isLightMode = useStorage('is-light-mode', true)
   color: var(--text-color);
   transition: all .3s;
 }
+
 </style>
 <style scoped>
 .container {

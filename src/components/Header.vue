@@ -6,7 +6,10 @@
     <nav>
       <ul class="navbar">
         <li v-for="cate of cateList" :key="cate.name" class="navbar-item">
-          <router-link :to="'/' + cate.name" class="navbar-item_link">
+          <router-link
+            :to="'/' + cate.name" class="navbar-item_link"
+            :class="currentCate === cate.name ? 'router-link-active' : ''"
+          >
             {{cate.name}}
             <span style="font-size: .9em; vertical-align: super;">{{cate.count}}</span>
           </router-link>
@@ -36,6 +39,7 @@ const props = defineProps({
 })
 const keyword = ref('')
 const cateList = computed(() => blogs.cateList)
+const currentCate = computed(() => blogs.cate)
 const handleSearch = () => {
   if (keyword.value) {
     const searchParam = `q=${keyword.value}+path%3Ablog+extension%3Amd`
